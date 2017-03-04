@@ -1,6 +1,6 @@
-/drafts
-/R/draft_tests 
-/plots
+./drafts
+./R/draft_tests 
+./R/plots
 
 # Boilerplate R ignore
 .Rbuildignore
