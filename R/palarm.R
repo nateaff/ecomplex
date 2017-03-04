@@ -3,16 +3,16 @@
 #  See paper :Automated detection of neonate EEG sleep stages
 
 #' Estimation of change points and mean on each
-#' stable interval
+#' stable interval.
 #'
-#' @param x Input data
-#' @delta1 A weighting parameter for phase I
-#' @delta2 A weighting parmameter for phase II
-#' @pf False detection probability 
-#' @m  Minimum interval size
-#' @M  Number of terms in KS series
-#' @epsilon Minimum relative distance of change point 
-#'  from endpoints of local interval
+#' @param x Input data.
+#' @param delta1 A weighting parameter for phase I.
+#' @param delta2 A weighting parmameter for phase II.
+#' @param pf False detection probability.
+#' @param m  Minimum interval size.
+#' @param M  Number of terms in KS series.
+#' @param epsilon Minimum relative distance of change point 
+#'  from endpoints of local interval.
 #'
 #' @return 
 #'
@@ -20,7 +20,7 @@
 #'
 #' \tabular{ll}{
 #' \code{kout} \tab Vector of indices of the detected change points,\cr
-#' \code{means} \tab Vector of mean values on each stationary segment \cr
+#' \code{means} \tab Vector of mean values on each stationary segment. \cr
 #' }
 
 palarm <- function(x, delta1 =1, 
@@ -97,12 +97,12 @@ ystat <- function(X, delta, m){
   list(stat = stat, k = k)
 }
 
+# 2004 by Anatoly Zlotnik and Alexandra Piryatinska
 
 #' Recursive algorithm for detection of change points by successive interval
 #' bisection
 #'
-#' @2004 by Anatoly Zlotnik and Alexandra Piryatinska
-
+#' 
 #' @param  X       local data
 #' @param kin     vector containing estimated global change points
 #' @param P       global index of first point of local data
@@ -219,7 +219,7 @@ check_pt <- function(x, start, delta, m, thresh, kout){
 #' @param delta   detect parameter
 #' 
 #' A \code{list} with :
-j#'
+#'
 #' \tabular{ll}{
 #' \code{meanK} \tab the mean values of the intervals,\cr
 #' \code{kout} \tab the final estimated change points.\cr
