@@ -49,17 +49,56 @@ bspline_err <- function(ys, sample_num, max_degree){
     hold_out  = temp[-cur_knots];
 
     # Mean absolute error for each degree spline
-    maes <- matrix(0, nrow = max_degree, 
+    errs <- matrix(0, nrow = max_degree, 
                       ncol = length(hold_out) )
     for (d in 1:max_degree){
         basis    <- splines::bs(xx, knots = cur_knots, degree = d)
         mod      <- lm(y ~ basis, data = df);
-        maes[d,] <- abs(ys[hold_out] - predict(mod)[hold_out])
+        errs[d,] <- abs(ys[hold_out] - predict(mod)[hold_out])
     }
-      epsilons[k]  <- min(apply(maes, 1, sum)) 
+      epsilons[k]  <- min(apply(errs, 1, sum)) 
   }
   return(mean(epsilons))
 }
+
+#' Function returns result for a single downsample level.
+#' 
+#' @param ys           A vector or time series. 
+#' @param sample_num   The amount the series is downsampled.
+#' @param max_degree   The maximum degree spline polynomial to fit.
+#' @export
+pspline_err <- function(ys, sample_num, max_degree){
+  xx <- 1:length(ys)
+  df <- data.frame(x = xx, y = ys); 
+  indices  <- downsample_perm(length(ys), sample_num);
+  # errors for each permutation
+  epsilons <- double(length(indices))
+  for (k in 1:sample_num) {
+    ind = indices[[k]]
+    temp      = 1:length(xx)
+    hold_out  = temp[-cur_knots];
+    # Mean absolute error for each degree spline
+    errs <- matrix(0, nrow = max_degree, 
+                      ncol = length(hold_out))
+    for (d in 1:max_degree){
+      mod = MMBsplines(ind, y[ind], 
+                       xmin, xmax, 
+                       degree = d,
+                       nseg = (length), 
+                       lambda = 1.0, 
+                       optimize = TRUE, 
+                       Psplines = TRUE)
+        # predictions on a dense grid:
+        yhat = predict(mod, hold_out)
+        errs[d,] <- abs(ys[hold_out] - yhat)
+    }
+      epsilons[k]  <- min(apply(errs, 1, sum)) 
+  }
+  return(mean(epsilons))
+}
+
+
+
 
 # update with spline()
 cspline_err <- function(ys, sample_num, max_degree = NULL){
@@ -83,8 +122,12 @@ cspline_err <- function(ys, sample_num, max_degree = NULL){
 #' @return  The normalized sequence.
 #' @export
 normalize <- function(xx){
-    abs(xx)/max(abs(xx)) 
-}
+    if(!max(xx) == min(xx)){
+      (xx - min(xx))/(max(xx) - min(xx)) 
+    } else {
+      rep(0, length(xx))
+    }
+  }
 
 
 #' Create list of all possible index patterns 
