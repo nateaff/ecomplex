@@ -4,16 +4,15 @@
 \alias{ecomplexity}
 \title{Compute the epsilon-complexity of a time series.}
 \usage{
-ecomplexity(xx, ds = 5, method = c("cspline", "bspline", "adlift"),
-  max_degree = 4)
+ecomplexity(xx, method = c("bspline", "cspline"), ds = 5, max_degree = 4)
 }
 \arguments{
-\item{ds}{Number of times to downsample.}
+\item{ds}{Number of times to downsample the input sequence.}
 
 \item{ys}{A sequence of points.}
 }
 \value{
-A list of features or the slope coefficient of the fit
+A list of features or the slope coefficient of the fit.
 }
 \description{
 Compute the epsilon-complexity of a time series.

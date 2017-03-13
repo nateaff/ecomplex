@@ -3,14 +3,13 @@
 #'
 #'
 #' @param ys A sequence of points. 
-#' @param ds Number of times to downsample.
+#' @param ds Number of times to downsample the input sequence.
 #'
-#' @return A list of features or the slope coefficient of the fit
+#' @return A list of features or the slope coefficient of the fit.
 #'
 #'@export
-ecomplexity <- function(xx, ds = 5, 
-                        method = c("cspline", "bspline", "adlift"), 
-                        max_degree = 4){
+ecomplexity <- function(xx, method = c("bspline", "cspline"), 
+                             ds = 5, max_degree = 4){
   xx <- normalize(xx)
   epsilons <- double(ds-1)
   ds <- 2:ds
@@ -19,11 +18,13 @@ ecomplexity <- function(xx, ds = 5,
     switch(method, 
     cspline = { epsilons[k-1] <- cspline_err(xx, k) },
     bspline = { epsilons[k-1] <- bspline_err(xx, k, max_degree) }, 
-    adlift = { epsilons[k-1] <- adapt_err(xx, k, max_degree)}
     ) # end switch
   }
 
-  fit <- lm(log(epsilons) ~ log(1/ds))   
+  fit <- NA  #
+  try({      
+     fit <- lm(log(epsilons) ~ log(1/ds))   
+  }, silent = T )
   structure(list(fit = fit, epsilons = epsilons, 
                 ds = ds, max_degree = max_degree,
                 method = method), 
@@ -41,7 +42,7 @@ bspline_err <- function(ys, sample_num, max_degree){
   xx <- 1:length(ys)
   df <- data.frame(x = xx,y = ys); 
   indices  <- downsample_perm(length(ys), sample_num);
-  # errors for each permutation
+  # minimum error for each permutation
   epsilons <- double(length(indices))
   for (k in 1:sample_num) {
     cur_knots = indices[[k]]
@@ -49,14 +50,19 @@ bspline_err <- function(ys, sample_num, max_degree){
     hold_out  = temp[-cur_knots];
 
     # Mean absolute error for each degree spline
-    errs <- matrix(0, nrow = max_degree, 
-                      ncol = length(hold_out) )
+    errs <- matrix(1000, nrow = max_degree, 
+                         ncol = length(hold_out) )
     for (d in 1:max_degree){
-        basis    <- splines::bs(xx, knots = cur_knots, degree = d)
-        mod      <- lm(y ~ basis, data = df);
-        errs[d,] <- abs(ys[hold_out] - predict(mod)[hold_out])
+        basis  <- splines::bs(xx, knots = cur_knots, degree = d)
+        yhat <- NA  
+        try({      
+           fit <- lm(y ~ basis, data = df);
+           yhat <- stats::predict(fit)[hold_out]
+           errs[d,] <- abs(ys[hold_out] - yhat)
+        }, silent = T )
     }
-      epsilons[k]  <- min(apply(errs, 1, sum)) 
+    if(is.na(errs[d,])) epsilons[k] <- NA 
+    else epsilons[k]  <- min(apply(errs, 1, sum))/length(ys) 
   }
   return(mean(epsilons))
 }
@@ -81,7 +87,7 @@ pspline_err <- function(ys, sample_num, max_degree){
     errs <- matrix(0, nrow = max_degree, 
                       ncol = length(hold_out))
     for (d in 1:max_degree){
-      mod = MMBsplines(ind, y[ind], 
+      fit <- MMBsplines(ind, y[ind], 
                        xmin, xmax, 
                        degree = d,
                        nseg = (length), 
@@ -89,7 +95,7 @@ pspline_err <- function(ys, sample_num, max_degree){
                        optimize = TRUE, 
                        Psplines = TRUE)
         # predictions on a dense grid:
-        yhat = predict(mod, hold_out)
+        yhat = predict(fit, hold_out)
         errs[d,] <- abs(ys[hold_out] - yhat)
     }
       epsilons[k]  <- min(apply(errs, 1, sum)) 

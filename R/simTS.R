@@ -63,7 +63,7 @@ generate <- function(mod) UseMethod("generate")
 
 #' @export
 generate.farima <- function(mod){
-  ar = mod$ar; ma = mhhod$ma; d = mod$d
+  ar = mod$ar; ma = mod$ma; d = mod$d
   function(n){
     fracdiff::fracdiff.sim(n, ar = ar, ma = ma, d = d)$series
   }
@@ -71,20 +71,22 @@ generate.farima <- function(mod){
 
 #' @export
 generate.arma <- function(mod){
-  phi <- mod$ar 
-  theta <- mod$ma 
+  phi    <- mod$ar 
+  theta  <- mod$ma
+  burnin <- 200 
+  sd <- 1
   function(n){
-    p <- size(phi)[1]
-    q <- size(theta)[1]
-    n1 = 200+n;
-    a = rnorm(n1+q, 0,1);
-    z <- double(p)
+    p  <- size(phi)[1]
+    q  <- size(theta)[1]
+    n1 <- burnin + n;
+    a  <- rnorm(n1+q, 0,sd);
+    z  <- double(p)
 
     for(i in seq_along(1:n1)){
        zt = z[i:(i+p-1)]*phi[p:1] + a[i+q] - a[i:(i+q-1)]*theta[q:1];
        z <- c(z, zt)
     }
-    z[(201+p):(n1+p)];
+    z[(burnin + 1 + p):(n1 + p)];
   
   }
 }
