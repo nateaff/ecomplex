@@ -33,7 +33,6 @@ extract_features <- function(data, features, id = "1", para = TRUE, verbose = FA
       } else {
         ret <- lapply(data, function(x) extract_one_feature(x, feature))
       }
-    k <- k + 1
     do.call(rbind, ret)
     }
 
@@ -53,79 +52,126 @@ clean_feature <- function(x, ...) UseMethod("clean_feature")
 
 
 clean_feature.FractalDim <- function(feature){
-  res <- plyr::unrowname(data.frame(fd = feature$fd)) 
-  names(res) <- paste0("fd_", feature$methods)
-  res
+  ret <- plyr::unrowname(data.frame(fd = feature$fd)) 
+  names(ret) <- paste0("fd_", feature$methods)
+  ret
 }
 
 
 clean_feature.fd_variogram <- function(feature){
-  res <- plyr::unrowname(data.frame(fd = feature$fd)) 
-  names(res) <- paste0("fd_", feature$methods)
-  class(res) <- "fd_variogram"
-  res
+  ret <- plyr::unrowname(data.frame(fd = feature$fd)) 
+  names(ret) <- paste0("fd_", feature$methods)
+  class(ret) <- "fd_variogram"
+  ret
 }
 
 clean_feature.bandpower <- function(feature){
-  res <- plyr::unrowname(data.frame((t(unlist(feature)))))
-  names(res) <- unlist(lapply(1:length(res), function(x) paste0("bp", x)))
-  res
+  plyr::unrowname(data.frame((t(unlist(feature)))))
 }
 
-clean_feature.nterm <- function(feature){ 
-  plyr::unrowname(data.frame(nterm_coeff = feature$coefficients[2])) 
-}
-
-clean_feature.ecomplexity <- function(feature){
- res <-  plyr::unrowname(data.frame(ecomp_coeff = feature$fit$coefficients[2])) 
- names(res) <- paste0("fd_", feature$method)
- res
-}
 
 clean_feature.ecomp_bspline <- function(feature){
-  plyr::unrowname(data.frame(ecomp_bspline = feature$fit$coefficients[2])) 
+  ret <- plyr::unrowname(data.frame(t(feature$fit$coefficients))) 
+  names(ret) <- paste0("bspline_", c("A", "B"))  
+  ret
 }
 
 clean_feature.ecomp_cspline <- function(feature){
-  plyr::unrowname(data.frame(ecomp_cspline = feature$fit$coefficients[2])) 
+ ret <- plyr::unrowname(data.frame(t(feature$fit$coefficients)))
+ names(ret) <- paste0("cspline_", c("A", "B"))  
+ ret
 }
 
-
-clean_feature.ecomp_adapt <- function(feature){
-  plyr::unrowname(data.frame(ecomp_adapt = feature$fit$coefficients[2])) 
+clean_feature.ecomp_lift <- function(feature){
+  plyr::unrowname(data.frame(t(feature$fit$coefficients))) 
+  # names(ret) <- paste0("lift_", c("A", "B"))  
+  # ret
 }
 
 clean_feature.sample_entropy <- function(feature){
-  plyr::unrowname(data.frame(sample_entropy = feature$sample_entropy)) 
+  plyr::unrowname(data.frame(sample_entropy = feature[1])) 
 }
 
-clean_feature.nterm3 <- function(feature){
-  plyr::unrowname(data.frame(nterm3 = feature$coefficients[2]))
+clean_feature.hurst <- function(feature){
+  plyr::unrowname(data.frame(hurst = feature$hurst$Hs))
 }
 
-clean_feature.nterm2 <- function(feature){
-  plyr::unrowname(data.frame(nterm2 = feature$coefficients[2]))
+clean_feature.var <- function(feature){
+   cat("var")
+   plyr::unrowname(data.frame(var = feature[1]))
 }
-
 
 clean_feature.default <- function(feature){
-  plyr::unrowname(data.frame(feature = feature))
+  plyr::unrowname(data.frame(feature = feature[1]))
 }
 
 
 clean_feature.wvar <- function(feature){
-  wav_var <- feature$variance[1:6]
-  fnames <- paste0("wvar_", feature$scales[1:6])
+  wav_var <- feature$variance[1:4]
+  fnames <- paste0("wvar_", feature$scales[1:4])
   ret <- plyr::unrowname(data.frame(t(wav_var)))
   names(ret) <- fnames
   ret
 }
  
 
-# change class to differentiate features
-sample_entropy2 <- function(xx){
-  res <- pracma::sample_entropy(xx)
-  structure(list(sample_entropy = res), class = "sample_entropy")
+
+#' Compute the sample entropy of the data
+#'
+#' @param xx The data 
+#'
+#' @return Sample entropy
+#' @export
+sample_entropy <- function(xx){
+  ret <- pracma::sample_entropy(xx)
+  # structure(list(sample_entropy = res), class = "sample_entropy")
+  class(ret) <- "sample_entropy"
+  ret
+}
+
+#' Corrected Hurst exponent
+#'
+#' The pracma implementation of the corrected Hurst
+#'  exponent
+#' 
+#' @param xx The data 
+#'
+#' @return The features
+#' @export
+#
+hurst <- function(xx){
+  ret <- pracma::hurstexp(xx, d = 50, display = FALSE)
+  # structure(list(hurst = res), class = "hurst")
+  class(ret) <- "hurst"
+  ret
+}
+
+#' Variance wrapper
+#'
+#'
+#' @param xx The data 
+#'
+#' @return The variance
+#' @export
+variance <- function(xx){
+  ret <- var(xx)
+  class(ret) <- "var"
+  ret
+}
+
+#' Compute epsilon complexity using lifting 
+#'
+#'
+#' @param xx The data 
+#'
+#' @return The features
+#' @export
+#' 
+ecomp_lift <- function(xx){
+  cat("ecomp lift \n")
+  res <- lift_comp(xx)
+  class(res) <-"ecomp_lift"
+  res
 }
 
 #' Compute epsilon complexity using bsplines
@@ -149,6 +195,7 @@ ecomp_cspline <- function(xx){
   res
 }
 
+
 #' Compute bandpowep
 #'
 #' Computes the bandpower on a default set 
@@ -165,10 +212,8 @@ bandpower <- function(xx){
   delta = c(0.5,4),
   theta = c(4,8),
   alpha1 = c(8, 12),
-  beta1 = c(12, 20),
-  beta2 = c(20, 40),
-  gamma1 = c(40, 60), 
-  gamma2 = c(60, 100))
+  beta = c(12, 30),
+  gamma = c(30, 100))
 
   if(!is.ts(xx)){
     fs <- 1220
@@ -180,11 +225,6 @@ bandpower <- function(xx){
   res
 }
 
-ecomp_adapt <- function(xx){
-  res <- ecomplexity(xx, ds = 5, method = "adlift")
-  class(res) <- "ecomp_adapt"
-  res
-}
 
 #' fd variogram
 #'
@@ -196,7 +236,7 @@ ecomp_adapt <- function(xx){
 #' @export
 #' 
 fd_variogram <- function(feature){
-  cat("fd_variogram \nterm")
+  cat("fd_variogram \n")
   fractaldim::fd.estimate(feature, methods = "variogram") 
 }
 
@@ -233,11 +273,10 @@ eeg_features <- function(x, features = NULL, parallel = TRUE){
 #' @return A data frame with features as columns and an id
 #'  column identifying group membership.
 #' @export
-test_features <- function(n = 10, seed = 2017, features =  NULL){
+test_features <- function(n = 10, seed = 2017, features =  NULL, para = FALSE){
   set.seed(seed)
   if(is.null(features)){
-  features <- c(nterm, sample_entropy2, ecomp_bspline, 
-                bandpower, fd_variogram, gmwm::wvar)
+  features <- c(sample_entropy2, ecomp_bspline, lift_comp, fd_variogram)
   }
 
   ts_mat1 <- replicate(n, arima.sim(n = 200, list(ar = c(0.8897, -0.4858), 
@@ -248,9 +287,8 @@ test_features <- function(n = 10, seed = 2017, features =  NULL){
 
 
   
-  df1 <- extract_features(ts_mat1, features, id = "1")
-  df2 <- extract_features(ts_mat2, features, id = "2")
+  df1 <- extract_features(ts_mat1, features, id = "1", para = FALSE)
+  df2 <- extract_features(ts_mat2, features, id = "2", para = FALSE)
   comb <- rbind(df1, df2)
   comb 
 }
-

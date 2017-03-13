@@ -4,7 +4,7 @@
 \alias{test_features}
 \title{Test a default suite of time series features.}
 \usage{
-test_features(n = 10, seed = 2017, features = NULL)
+test_features(n = 10, seed = 2017, features = NULL, para = FALSE)
 }
 \arguments{
 \item{n}{The number of time series generated for each group.}
