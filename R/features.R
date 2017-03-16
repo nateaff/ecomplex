@@ -123,6 +123,7 @@ clean_feature.wvar <- function(feature){
 #' @return Sample entropy
 #' @export
 sample_entropy <- function(xx){
+  cat("sample entropy \n" )
   ret <- pracma::sample_entropy(xx)
   # structure(list(sample_entropy = res), class = "sample_entropy")
   class(ret) <- "sample_entropy"
@@ -154,6 +155,7 @@ hurst <- function(xx){
 #' @return The variance
 #' @export
 variance <- function(xx){
+  cat("var \n")
   ret <- var(xx)
   class(ret) <- "var"
   ret
@@ -196,15 +198,14 @@ ecomp_cspline <- function(xx){
 }
 
 
-#' Compute bandpowep
+#' Compute bandpower
 #'
 #' Computes the bandpower on a default set 
 #'   
 #' @param xx The data
 #' 
 #' @return A data frame of power in each band
-#' @export
-#' 
+#' @export 
 bandpower <- function(xx){
   cat("Bandpower \n")
 

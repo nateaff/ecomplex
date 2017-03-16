@@ -16,8 +16,8 @@
 
 # Coefficient matrices for interpolating polynomials
 
-pfilter <- function(order, pos){
-    N <- order + 1
+pfilter <- function(degree, pos){
+    N <- degree + 1
     eval <- seq(min(pos)-1, max(pos)+1, by = 2)
     cmat <- matrix(0, nrow = length(eval), ncol = length(pos))
     ymat <- diag(N)
@@ -31,10 +31,10 @@ pfilter <- function(order, pos){
 }
 
 # could update to just evaluate the 0 position
-pfilter2 <- function(order, pos){
+pfilter2 <- function(degree, pos){
   xx <- (min(pos)-2):(max(pos)+2)
   eval <- xx[!(xx %in% pos)]
-  N <- order + 1
+  N <- degree + 1
   cmat <- matrix(0, nrow = length(eval), ncol = length(pos))
   ymat <- diag(N)
   for(j in 1:length(eval)){
@@ -46,9 +46,9 @@ pfilter2 <- function(order, pos){
   cmat
 }
 
-pfilter3 <- function(order, pos){
+pfilter3 <- function(degree, pos){
   eval <- 0
-  N <- order + 1
+  N <- degree + 1
   cmat <- matrix(0, nrow = length(eval), ncol = length(pos))
   ymat <- diag(N)
   for(j in 1:length(eval)){
@@ -70,8 +70,8 @@ filters1 <- function(){
                   quintic <- c(-5,-3,-1,1,3,5), 
                   sextic <-c(1,1,1,1,1,1,1), # dummy
                   septic <- c(-7,-5,-3,-1,1,3,5,7)  )
-  orders <- 1:7
-  ret <- lapply(orders, function(x) pfilter(x, pts[[x]] ))
+  degrees <- 1:7
+  ret <- lapply(degrees, function(x) pfilter(x, pts[[x]] ))
   ret
 }
 
@@ -83,8 +83,8 @@ filters2 <- function(){
                 cubic1 <- c(-4,-1,2,5),
                 cubic1 <- c(-4,-1,2,5),
                 quintic1 <- c(-7, -4,-1,2,5, 8))
-  orders <- c(1,1,3,3, 5)
-  ret <- lapply(1:length(orders), function(k) pfilter2(orders[k], pts[[k]] ))
+  degrees <- c(1,1,3,3, 5)
+  ret <- lapply(1:length(degrees), function(k) pfilter2(degrees[k], pts[[k]] ))
   ret
 }
 
@@ -97,8 +97,8 @@ filters3 <- function(){
                 cubic2 <- c(-3, -1, 1, 2),
                 quintic1 <- c(-4,-2, -1, 1, 3, 4),
                 quintic2 <- c(-4,-3, -1, 1, 2, 4))
-  orders <- c(1,3,3,5,5)
-  ret <- lapply(1:length(orders), function(k) pfilter3(orders[k], pts[[k]] ))
+  degrees <- c(1,3,3,5,5)
+  ret <- lapply(1:length(degrees), function(k) pfilter3(degrees[k], pts[[k]] ))
   ret
 }
 

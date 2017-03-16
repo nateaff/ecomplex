@@ -2,7 +2,7 @@
 % Please edit documentation in R/features.R
 \name{bandpower}
 \alias{bandpower}
-\title{Compute bandpowep}
+\title{Compute bandpower}
 \usage{
 bandpower(xx)
 }
