@@ -14,13 +14,13 @@ bp_pgram(x, fs, freqs, psd = NULL, plot_pgram = FALSE)
 \item{freqs}{A vector or list of vectors of the
 bandwidth's whose power should be computed}
 
-\item{psd}{The output from spec.pgram().}
+\item{psd}{The output from stats::spec.pgram().}
 
 \item{plot_pgram}{Plots default periodogram if TRUE}
 }
 \value{
 A double or list of doubles representing the
- signal's frequency in the given bandwidths
+          signal's frequency in the given bandwidths
 }
 \description{
 Estimates the power within the given frequency 

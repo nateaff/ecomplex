@@ -4,12 +4,22 @@
 \alias{mackeyglass}
 \title{Create a Mackey-Glass model}
 \usage{
-mackeyglass(tau, init)
+mackeyglass(tau = 17, beta = 0.25, gamma = 0.1, n = 10, init = 0.5,
+  noise = 0)
 }
 \arguments{
 \item{tau}{The time lag}
 
-\item{init}{A vector used to initialize the Mackey-Glass function}
+\item{beta}{The beta parameter}
+
+\item{gamma}{The gamma parameter}
+
+\item{n}{The n parameter}
+
+\item{init}{A value used to initialize the discrete Mackeyglass
+equation}
+
+\item{noise}{The noise ratio to add to the function}
 }
 \value{
 A model for a Mackey-Glass equation

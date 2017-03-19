@@ -7,14 +7,14 @@
 farima(ar, ma, d)
 }
 \arguments{
-\item{ar}{The autoregressive parameters.}
+\item{ar}{Autoregressive parameters.}
 
-\item{ma}{The moving average parameters.}
+\item{ma}{Moving average parameters.}
 
-\item{d}{The long term memory parameter.}
+\item{d}{Long term memory parameter.}
 }
 \value{
-A function model of class "farima".
+A parametrized FARIMA model.
 }
 \description{
 Create a FARIMA model.

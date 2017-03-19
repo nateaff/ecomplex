@@ -22,7 +22,6 @@
 #' \code{kout} \tab Vector of indices of the detected change points,\cr
 #' \code{means} \tab Vector of mean values on each stationary segment. \cr
 #' }
-
 palarm <- function(x, delta1 =1, 
                       delta2 = 0, 
                       pf = 0.1, 
@@ -68,12 +67,13 @@ ksinverse <- function(pf, M){
   res$x
 }
 
+
 #' Calculate statistics for change point and
-#'  maximize to detect change point k
+#'  maximize to detect change point k.
 #'
-#' @param X Input data
-#' @param delta Detect parameter
-#' @param m Minimum interval size
+#' @param X Input data.
+#' @param delta Detect parameter.
+#' @param m Minimum interval size.
 #'
 #'  
 #' @return 
@@ -97,21 +97,22 @@ ystat <- function(X, delta, m){
   list(stat = stat, k = k)
 }
 
+
 # 2004 by Anatoly Zlotnik and Alexandra Piryatinska
 
 #' Recursive algorithm for detection of change points by successive interval
-#' bisection
+#' bisection.
 #'
 #' 
-#' @param  X       local data
-#' @param kin     vector containing estimated global change points
-#' @param P       global index of first point of local data
-#' @param delta   detect parameter
-#' @param thresh  minimum statistic for change point characterization
-#' @param m       minimum interval size
-#' @param epsilon minimum relative distance of change point from endpoints
+#' @param  X      Local data.
+#' @param kin     Vector containing estimated global change points.
+#' @param P       Global index of first point of local data.
+#' @param delta   Detect parameter.
+#' @param thresh  Minimum statistic for change point characterization.
+#' @param m       Minimum interval size.
+#' @param epsilon Minimum relative distance of change point from endpoints.
 #'
-#'  @return kout    updated vector of estimated global change points
+#'  @return kout    Updated vector of estimated global change points.
 palarmf <- function( X, 
                     kin = double(0), 
                     P = 1, 
@@ -119,7 +120,6 @@ palarmf <- function( X,
                     thresh = 1.224, 
                     m = 5, 
                     epsilon = 0.02 ){
-  # cat("palarmf called", "\n")
   res <- ystat(X, delta, m)
   k <- res$k 
   stat <- res$stat
@@ -153,15 +153,15 @@ palarmf <- function( X,
 }
 
 #' Checks estimated global change points for errors 
-#'  and performs update
+#'  and performs update.
 #'
-#' @param x Input data
-#' @param k A vector containing estimated global change points
-#' @param delta Detect parameter
-#' @param m Minimum interval size
-#' @param thresh Minimum statistic for chnage point characterization
+#' @param x Input data.
+#' @param kin A vector containing estimated global change points.
+#' @param delta Detect parameter.
+#' @param m Minimum interval size.
+#' @param thresh Minimum statistic for change point characterization.
 #' 
-#' @return kout Estimated global change points
+#' @return kout Estimated global change points.
 diagn <- function(x, kin, delta, m, thresh){
   N <- length(x); 
   Z <- length(kin); 
@@ -170,7 +170,6 @@ diagn <- function(x, kin, delta, m, thresh){
   if(length(kin) > 1) {
     b <- floor((kin[2] + kin[1])/2); a <- 0;
     kout <- check_pt(x[1:b], a, delta, m, thresh, kout)
-    #cat(sprintf('a= %0.3f, b=%0.3f \n', a,b))
     for(i in 2:(length(kin) -1)){
       a <- floor((kin[i]+ kin[i-1])/2)+1
       b <- floor((kin[i+1] + kin[i])/2)
@@ -180,7 +179,6 @@ diagn <- function(x, kin, delta, m, thresh){
     a <- round((kin[Z]+ kin[Z-1])/2)
     b = N;
     kout <- check_pt(x[a:N], a, delta, m, thresh, kout)
-    #cat(sprintf('a= %0.3f, b=%0.3f \n', a,b))
   } else {
     stats <- ystat(x, delta, m)
     if(stats$stat[stats$k] > (thresh*(sd(x)/sqrt(N))) ) {
@@ -201,7 +199,6 @@ check_pt <- function(x, start, delta, m, thresh, kout){
   pos <- start + stats$k - adjust
 
   if(stats$stat[stats$k] > level){
-    #cat(sprintf('add k= %d \n', pos))
       kout <- c(kout, pos)
   }
   kout
@@ -215,9 +212,10 @@ check_pt <- function(x, start, delta, m, thresh, kout){
 #' @param X       Input data.
 #' @param xin     The original time-series.
 #' @param kin     A vector containing estimated global change points
-#' @param m       minimum interval size.
-#' @param delta   detect parameter
-#' 
+#' @param m       Minimum interval size.
+#' @param delta   Detect parameter.
+#' @param thresh  Threshold for detecting change-point.
+#'
 #' A \code{list} with :
 #'
 #' \tabular{ll}{
@@ -244,10 +242,8 @@ if(length(kin)>1) {
       }
       kout <- c(kout, stats$k)
     for(i in 2:(length(kin)-1)){
-    # for i=2:length(kin)-1  
         a <- floor((kin[i] + kin[i-1] )/2) + 1
         b <- floor((kin[i+1] + kin[i])/2)
-        # Xtemp <- X[a:b];
         stats <- ystat(X[a:b], delta,m)
         kout <- c(kout, a + stats$k - 1 )
         M1 <- mean(xin[(kout[i-1]+1):(kout[i]-1)])
@@ -264,7 +260,7 @@ if(length(kin)>1) {
     M3 <- mean(xin[(kout[Z] + 1):N])
     meanK <- c(meanK, M3*rep(1 , N - kout[Z]+1))
   } else {
-     stats  <- ystat(X, delta, Fm); 
+     stats  <- ystat(X, delta, m); 
      kout <-  c(kout, stats$k)
      meanK <- c(rep(1, stats$k) * mean(xin[1:stats$k]), 
                 rep(1, N - stats$k) * mean(xin[ stats$k:N] )) 

@@ -4,15 +4,19 @@
 \alias{extract_features}
 \title{Extract set of features from a time series.}
 \usage{
-extract_features(data, features, id = "1", para = TRUE, verbose = FALSE,
-  ...)
+extract_features(data, features, id = "1", multicore = TRUE,
+  verbose = FALSE)
 }
 \arguments{
 \item{data}{A time series, matrix of dataframe.}
 
 \item{features}{A list or vector of ts_features.}
 
-\item{prefix}{Optional prefix for column headers.}
+\item{id}{Optional prefix for column headers.}
+
+\item{multicore}{Parallelize feature extraction (Linux only).}
+
+\item{verbose}{Print status to console.}
 }
 \value{
 A data frame with row of features for each time.

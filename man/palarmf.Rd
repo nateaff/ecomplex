@@ -3,30 +3,30 @@
 \name{palarmf}
 \alias{palarmf}
 \title{Recursive algorithm for detection of change points by successive interval
-bisection}
+bisection.}
 \usage{
 palarmf(X, kin = double(0), P = 1, delta = 1, thresh = 1.224, m = 5,
   epsilon = 0.02)
 }
 \arguments{
-\item{X}{local data}
+\item{X}{Local data.}
 
-\item{kin}{vector containing estimated global change points}
+\item{kin}{Vector containing estimated global change points.}
 
-\item{P}{global index of first point of local data}
+\item{P}{Global index of first point of local data.}
 
-\item{delta}{detect parameter}
+\item{delta}{Detect parameter.}
 
-\item{thresh}{minimum statistic for change point characterization}
+\item{thresh}{Minimum statistic for change point characterization.}
 
-\item{m}{minimum interval size}
+\item{m}{Minimum interval size.}
 
-\item{epsilon}{minimum relative distance of change point from endpoints
+\item{epsilon}{Minimum relative distance of change point from endpoints.
 
- @return kout    updated vector of estimated global change points}
+ @return kout    Updated vector of estimated global change points.}
 }
 \description{
 Recursive algorithm for detection of change points by successive interval
-bisection
+bisection.
 }
 

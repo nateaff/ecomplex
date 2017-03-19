@@ -3,26 +3,26 @@
 \name{diagn}
 \alias{diagn}
 \title{Checks estimated global change points for errors 
- and performs update}
+ and performs update.}
 \usage{
 diagn(x, kin, delta, m, thresh)
 }
 \arguments{
-\item{x}{Input data}
+\item{x}{Input data.}
 
-\item{delta}{Detect parameter}
+\item{kin}{A vector containing estimated global change points.}
 
-\item{m}{Minimum interval size}
+\item{delta}{Detect parameter.}
 
-\item{thresh}{Minimum statistic for chnage point characterization}
+\item{m}{Minimum interval size.}
 
-\item{k}{A vector containing estimated global change points}
+\item{thresh}{Minimum statistic for change point characterization.}
 }
 \value{
-kout Estimated global change points
+kout Estimated global change points.
 }
 \description{
 Checks estimated global change points for errors 
- and performs update
+ and performs update.
 }
 

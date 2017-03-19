@@ -14,9 +14,11 @@ finalal(X, xin, kin, m, delta, thresh)
 
 \item{kin}{A vector containing estimated global change points}
 
-\item{m}{minimum interval size.}
+\item{m}{Minimum interval size.}
 
-\item{delta}{detect parameter
+\item{delta}{Detect parameter.}
+
+\item{thresh}{Threshold for detecting change-point.
 
 A \code{list} with :
 

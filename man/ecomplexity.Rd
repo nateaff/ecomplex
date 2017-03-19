@@ -4,12 +4,18 @@
 \alias{ecomplexity}
 \title{Compute the epsilon-complexity of a time series.}
 \usage{
-ecomplexity(xx, method = c("bspline", "cspline"), ds = 5, max_degree = 4)
+ecomplexity(xx, method = c("bspline", "cspline"), ds = 5, max_degree = 5)
 }
 \arguments{
+\item{xx}{A sequence of points.}
+
+\item{method}{The interpolation or approximation method. One of
+c("bspline", "cspline")}
+
 \item{ds}{Number of times to downsample the input sequence.}
 
-\item{ys}{A sequence of points.}
+\item{max_degree}{The maximum order spline used in the approximation
+step}
 }
 \value{
 A list of features or the slope coefficient of the fit.

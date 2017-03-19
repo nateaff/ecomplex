@@ -4,14 +4,12 @@
 \alias{arma}
 \title{Create an ARMA model.}
 \usage{
-arma(ar, ma, d)
+arma(ar, ma)
 }
 \arguments{
-\item{ar}{Autoregressive parameter.}
+\item{ar}{x parameter.}
 
 \item{ma}{Moving average parameter.}
-
-\item{d}{Differencing parameter. (TODO: not used)}
 }
 \value{
 An ARMA model.
