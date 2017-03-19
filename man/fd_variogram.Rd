@@ -2,9 +2,9 @@
 % Please edit documentation in R/features.R
 \name{fd_variogram}
 \alias{fd_variogram}
-\title{fd variogram}
+\title{Variogram-based estimate of fractal dimension.}
 \usage{
-fd_variogram(feature)
+fd_variogram(xx)
 }
 \arguments{
 \item{xx}{The data}
@@ -13,6 +13,7 @@ fd_variogram(feature)
 The results from fd.estimate
 }
 \description{
-fd
+This function is a wrapper for the fd.estimate 
+function of the fractaldim package.
 }
 

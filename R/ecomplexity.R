@@ -1,15 +1,18 @@
 
 #' Compute the epsilon-complexity of a time series.
 #'
-#'
-#' @param ys A sequence of points. 
+#' @param xx A sequence of points. 
 #' @param ds Number of times to downsample the input sequence.
+#' @param method The interpolation or approximation method. One of
+#'                c("bspline", "cspline")
+#' @param max_degree The maximum order spline used in the approximation
+#'              step
 #'
 #' @return A list of features or the slope coefficient of the fit.
 #'
 #'@export
 ecomplexity <- function(xx, method = c("bspline", "cspline"), 
-                             ds = 5, max_degree = 4){
+                             ds = 5, max_degree = 5){
   xx <- normalize(xx)
   epsilons <- double(ds-1)
   ds <- 2:ds
@@ -66,43 +69,6 @@ bspline_err <- function(ys, sample_num, max_degree){
   }
   return(mean(epsilons))
 }
-
-#' Function returns result for a single downsample level.
-#' 
-#' @param ys           A vector or time series. 
-#' @param sample_num   The amount the series is downsampled.
-#' @param max_degree   The maximum degree spline polynomial to fit.
-#' @export
-pspline_err <- function(ys, sample_num, max_degree){
-  xx <- 1:length(ys)
-  df <- data.frame(x = xx, y = ys); 
-  indices  <- downsample_perm(length(ys), sample_num);
-  # errors for each permutation
-  epsilons <- double(length(indices))
-  for (k in 1:sample_num) {
-    ind = indices[[k]]
-    temp      = 1:length(xx)
-    hold_out  = temp[-cur_knots];
-    # Mean absolute error for each degree spline
-    errs <- matrix(0, nrow = max_degree, 
-                      ncol = length(hold_out))
-    for (d in 1:max_degree){
-      fit <- MMBsplines(ind, y[ind], 
-                       xmin, xmax, 
-                       degree = d,
-                       nseg = (length), 
-                       lambda = 1.0, 
-                       optimize = TRUE, 
-                       Psplines = TRUE)
-        # predictions on a dense grid:
-        yhat = predict(fit, hold_out)
-        errs[d,] <- abs(ys[hold_out] - yhat)
-    }
-      epsilons[k]  <- min(apply(errs, 1, sum)) 
-  }
-  return(mean(epsilons))
-}
-
 
 
 

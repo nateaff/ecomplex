@@ -10,13 +10,11 @@
 #' @param x The input signal
 #' @param fs The signal sampling rate
 #' @param freqs A vector or list of vectors of the
-#'  bandwidth's whose power should be computed
-#' @param psd The output from spec.pgram(). 
+#'               bandwidth's whose power should be computed
+#' @param psd The output from stats::spec.pgram(). 
 #' @param plot_pgram Plots default periodogram if TRUE 
 #' @return  A double or list of doubles representing the
-#'  signal's frequency in the given bandwidths
-#' 
-#' @export
+#'           signal's frequency in the given bandwidths
 #' 
 bp_pgram <- function(x, fs, freqs, 
                     psd = NULL, 
@@ -28,7 +26,7 @@ bp_pgram <- function(x, fs, freqs,
     x <- ts(x, frequency = fs)
   }
   if(is.null(psd)){ 
-    pgram <- spec.pgram(x, plot = plot_pgram, n.used = 100)
+    pgram <- stats::spec.pgram(x, plot = plot_pgram, n.used = 100)
   }
   lapply(freqs, function(x) bandpower_one(pgram, x)) 
 }

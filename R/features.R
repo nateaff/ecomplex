@@ -2,16 +2,19 @@
 #'
 #' @param data A time series, matrix of dataframe. 
 #' @param features A list or vector of ts_features.
-#' @param prefix Optional prefix for column headers.
+#' @param id Optional prefix for column headers.
+#' @param multicore Parallelize feature extraction (Linux only).
+#' @param verbose Print status to console.
+#' 
 #' @return A data frame with row of features for each time.
 #'  series in data. (TODO: single feature, system 
 #'  check for parallelization)
 #'  
 #' @export 
-extract_features <- function(data, features, id = "1", para = TRUE, verbose = FALSE, ...){
+extract_features <- function(data, features, id = "1", multicore = TRUE, verbose = FALSE){
 
   # TODO: switch for system type
-  if(para){
+  if(multicore){
    cores <- parallel::detectCores()
    if(verbose) cat("Using", cores, " cores ... \n")
   }
@@ -27,7 +30,7 @@ extract_features <- function(data, features, id = "1", para = TRUE, verbose = FA
     stopifnot(is.data.frame(data))
 
     f <- function(feature){
-      if(para){
+      if(multicore){
         ret <- parallel::mclapply(data, function(x) extract_one_feature(x, feature), 
                         mc.cores = cores)
       } else {
@@ -83,9 +86,9 @@ clean_feature.ecomp_cspline <- function(feature){
 }
 
 clean_feature.ecomp_lift <- function(feature){
-  plyr::unrowname(data.frame(t(feature$fit$coefficients))) 
-  # names(ret) <- paste0("lift_", c("A", "B"))  
-  # ret
+  ret <- plyr::unrowname(data.frame(t(feature$fit$coefficients))) 
+  names(ret) <- paste0("lift_", c("A", "B"))  
+  ret
 }
 
 clean_feature.sample_entropy <- function(feature){
@@ -93,18 +96,16 @@ clean_feature.sample_entropy <- function(feature){
 }
 
 clean_feature.hurst <- function(feature){
-  plyr::unrowname(data.frame(hurst = feature$hurst$Hs))
+  plyr::unrowname(data.frame(hurst = feature$Hs))
 }
 
-clean_feature.var <- function(feature){
-   cat("var")
+clean_feature.variance <- function(feature){
    plyr::unrowname(data.frame(var = feature[1]))
 }
 
-clean_feature.default <- function(feature){
-  plyr::unrowname(data.frame(feature = feature[1]))
+clean_feature.permutation_entropy <- function(feature){
+  plyr::unrowname(data.frame(p_entropy = feature[1]))
 }
-
 
 clean_feature.wvar <- function(feature){
   wav_var <- feature$variance[1:4]
@@ -115,6 +116,28 @@ clean_feature.wvar <- function(feature){
 }
  
 
+clean_feature.default <- function(feature){
+  plyr::unrowname(data.frame(feature = feature[1]))
+}
+
+#' Compute the permutation entropy of a time series.
+#'
+#' Calculates the permutation entropy of a time 
+#'  series using the pdc package. The miminimum
+#'  entropy over the embedding dimensions 3:7 is
+#'  returned.
+#'
+#' @param xx A time series or vector.
+#'
+#' @return The permutation entropy of the time series.
+#' @export
+permutation_entropy <- function(xx){
+  ret <- pdc::entropyHeuristic( xx )
+  row <- which(ret$entropy.values[, 2] == ret$m)
+  ret <- ret$entropy.values[row, 3]
+  class(ret) <- "permutation_entropy"
+  ret
+}
 
 #' Compute the sample entropy of the data
 #'
@@ -142,7 +165,6 @@ sample_entropy <- function(xx){
 #
 hurst <- function(xx){
   ret <- pracma::hurstexp(xx, d = 50, display = FALSE)
-  # structure(list(hurst = res), class = "hurst")
   class(ret) <- "hurst"
   ret
 }
@@ -157,7 +179,7 @@ hurst <- function(xx){
 variance <- function(xx){
   cat("var \n")
   ret <- var(xx)
-  class(ret) <- "var"
+  class(ret) <- "variance"
   ret
 }
 
@@ -212,7 +234,7 @@ bandpower <- function(xx){
   freqs <- list(
   delta = c(0.5,4),
   theta = c(4,8),
-  alpha1 = c(8, 12),
+  alpha = c(8, 12),
   beta = c(12, 30),
   gamma = c(30, 100))
 
@@ -227,18 +249,18 @@ bandpower <- function(xx){
 }
 
 
-#' fd variogram
-#'
-#' fd 
+#' Variogram-based estimate of fractal dimension. 
+#' 
+#' This function is a wrapper for the fd.estimate 
+#' function of the fractaldim package.
 #'
 #' @param xx The data
 #'
 #' @return The results from fd.estimate
 #' @export
-#' 
-fd_variogram <- function(feature){
+fd_variogram <- function(xx){
   cat("fd_variogram \n")
-  fractaldim::fd.estimate(feature, methods = "variogram") 
+  fractaldim::fd.estimate(xx, methods = "variogram") 
 }
 
 #Temp 
@@ -247,49 +269,17 @@ fd_variogram <- function(feature){
 #'
 #' @param x The number of time series generated for each group
 #' @param features The features set to run 
-#' @param parallel Parallelize computations (Linux only)
+#' @param multicore Parallelize computations (Linux only)
 #'
 #' @return A data frame with features as columns and an id
 #'  column identifying group membership
 #' @export
-eeg_features <- function(x, features = NULL, parallel = TRUE){
+eeg_features <- function(x, features = NULL, multicore = TRUE){
   if (is.null(features)){
   features <- c(ecomp_bspline, bandpower, fd_variogram)
   }
-  df <- extract_features(x, features, id = "1", para = para)
+
+  df <- extract_features(x, features, id = "1", multicore = multicore)
   df
 } 
 
-
-#' Test a default suite of time series features.
-#'
-#' Extracts default set of time series features from
-#'  two groups of ARMA(2,2) processes. ARMA processes 
-#'  are generated using arima.sim() using different initial
-#'  parameters for each group.
-#'
-#' @param n The number of time series generated for each group.
-#' @param seed The seed for the random number generator.
-#'
-#' @return A data frame with features as columns and an id
-#'  column identifying group membership.
-#' @export
-test_features <- function(n = 10, seed = 2017, features =  NULL, para = FALSE){
-  set.seed(seed)
-  if(is.null(features)){
-  features <- c(sample_entropy2, ecomp_bspline, lift_comp, fd_variogram)
-  }
-
-  ts_mat1 <- replicate(n, arima.sim(n = 200, list(ar = c(0.8897, -0.4858), 
-                ma = c(-0.2279, 0.2488)), sd = sqrt(0.1796)))
-  
-  ts_mat2 <- replicate(n, arima.sim(n = 200,
-   list(ar = c(-0.71, 0.18), ma = c(0.92, 0.14)), sd = sqrt(0.291)))
-
-
-  
-  df1 <- extract_features(ts_mat1, features, id = "1", para = FALSE)
-  df2 <- extract_features(ts_mat2, features, id = "2", para = FALSE)
-  comb <- rbind(df1, df2)
-  comb 
-}

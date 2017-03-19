@@ -3,16 +3,16 @@
 \name{ystat}
 \alias{ystat}
 \title{Calculate statistics for change point and
- maximize to detect change point k}
+ maximize to detect change point k.}
 \usage{
 ystat(X, delta, m)
 }
 \arguments{
-\item{X}{Input data}
+\item{X}{Input data.}
 
-\item{delta}{Detect parameter}
+\item{delta}{Detect parameter.}
 
-\item{m}{Minimum interval size}
+\item{m}{Minimum interval size.}
 }
 \value{
 A \code{list} with :
@@ -24,6 +24,6 @@ A \code{list} with :
 }
 \description{
 Calculate statistics for change point and
- maximize to detect change point k
+ maximize to detect change point k.
 }
 

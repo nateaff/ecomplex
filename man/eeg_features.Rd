@@ -4,14 +4,14 @@
 \alias{eeg_features}
 \title{Extract eeg features}
 \usage{
-eeg_features(x, features = NULL, parallel = TRUE)
+eeg_features(x, features = NULL, multicore = TRUE)
 }
 \arguments{
 \item{x}{The number of time series generated for each group}
 
 \item{features}{The features set to run}
 
-\item{parallel}{Parallelize computations (Linux only)}
+\item{multicore}{Parallelize computations (Linux only)}
 }
 \value{
 A data frame with features as columns and an id

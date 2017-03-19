@@ -1,5 +1,5 @@
 Package: ecomplex
-Title: Compute the epsilon-complexity of a time series.
+Title: Compute the epsilon-complexity of a time series
 Version: 0.0.1
 Authors@R: person("Nathanael", "Aff", email = "nathana@example.com", role = c("aut", "cre"))
 Description: The package provides several tools for analyzing 
@@ -8,8 +8,16 @@ Description: The package provides several tools for analyzing
     detection algorithm. 
 Depends:
     R (>= 3.0)
-License: MIT + LICENSE
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Author: Aff Nathanael <nathanaelaff@gmail.com>
 RoxygenNote: 5.0.1
+Suggests: testthat
+Imports:
+  stats,
+  pracma,
+  fracdiff,
+  fractaldim,
+  pdc, 
+  plyr

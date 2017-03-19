@@ -11,13 +11,15 @@ weierstrass(a, b, random = TRUE)
 
 \item{b}{The frequencies parameter.}
 
-\item{random}{Create a random phase model.}
+\item{random}{If true a random phase ~unif(0,1) is added.}
 }
 \value{
 The parametrized model.
 }
 \description{
 Creates a model for a Weierstrass or random 
- phase Weierstrass function
+ phase Weierstrass function. If random = FALSE
+ the function is evaluated on (0,1), otherwise
+ on (1,n).
 }
 
