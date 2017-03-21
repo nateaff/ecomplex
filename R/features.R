@@ -50,7 +50,7 @@ extract_one_feature <- function(tseries, feature, ...){
   clean_feature(feature(tseries, ...))
 }
 
-
+#'export
 clean_feature <- function(x, ...) UseMethod("clean_feature")
 
 

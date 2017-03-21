@@ -1,7 +1,7 @@
 Package: ecomplex
 Title: Compute the epsilon-complexity of a time series
 Version: 0.0.1
-Authors@R: person("Nathanael", "Aff", email = "nathana@example.com", role = c("aut", "cre"))
+Authors@R: person("Nathanael", "Aff", email = "nathana@sfsu.edu.com", role = c("aut", "cre"))
 Description: The package provides several tools for analyzing 
     time series including the function for computing the
     epsilon-complexity of a time series and a change-point
@@ -11,7 +11,7 @@ Depends:
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Author: Aff Nathanael <nathanaelaff@gmail.com>
+Author: Aff Nathanael <nathanaelaff@sfsu.edu.com>
 RoxygenNote: 5.0.1
 Suggests: testthat
 Imports:
