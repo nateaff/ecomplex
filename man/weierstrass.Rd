@@ -2,24 +2,33 @@
 % Please edit documentation in R/simTS.R
 \name{weierstrass}
 \alias{weierstrass}
-\title{Create an Weierstrass function model.}
+\title{Single parameter Weierstrass function model.}
 \usage{
-weierstrass(a, b, random = TRUE)
+weierstrass(a, b = 0, random = TRUE, density = 1)
 }
 \arguments{
-\item{a}{The amplitudes parameter.}
+\item{a}{The holder constant of the function. Equal to 
+-log(a)/log(b) for the two parameter Weierstrass.
+If b is zero, this is the amplitude pameter of the
+two parameter Weierstrass function.}
 
-\item{b}{The frequencies parameter.}
+\item{b}{The frequencies parameter. 
+If zero the single parameter Weierstrass function is used.}
 
-\item{random}{If true a random phase ~unif(0,1) is added.}
+\item{random}{If true generates a random phase model.}
+
+\item{density}{Density of the grid on which the function is computed.
+For example, if density = 100 then on (0,1) 100 points
+are computed.}
 }
 \value{
 The parametrized model.
 }
 \description{
 Creates a model for a Weierstrass or random 
- phase Weierstrass function. If random = FALSE
- the function is evaluated on (0,1), otherwise
- on (1,n).
+ phase Weierstrass function with single parameter
+ a. The resulting function is a-Holder continuous.
+ If random, theu function is evaluated on (1,n), 
+ otherwise on (0,1),
 }
 

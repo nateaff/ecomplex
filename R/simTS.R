@@ -10,22 +10,6 @@ arma <- function(ar, ma){
 }
 
 
-#' Create an Weierstrass function model.
-#'
-#' Creates a model for a Weierstrass or random 
-#'  phase Weierstrass function. If random = FALSE
-#'  the function is evaluated on (0,1), otherwise
-#'  on (1,n).  
-#'
-#' @param a The amplitudes parameter.
-#' @param b The frequencies parameter.
-#' @param random If true a random phase ~unif(0,1) is added.
-#' @return The parametrized model.
-#' @export
-weierstrass <- function(a, b, random = TRUE){
-    structure(list(a = a, b = b, random = random), class = "weierstrass")
-}
-
 #' Single parameter Weierstrass function model.
 #'
 #' Creates a model for a Weierstrass or random 
@@ -35,12 +19,19 @@ weierstrass <- function(a, b, random = TRUE){
 #'  otherwise on (0,1), 
 #'
 #' @param a The holder constant of the function. Equal to 
-#'           -log(a)/log(b) for the two parameter Weierstrass
+#'           -log(a)/log(b) for the two parameter Weierstrass.
+#'           If b is zero, this is the amplitude pameter of the
+#'           two parameter Weierstrass function.
+#' @param b The frequencies parameter. 
+#'           If zero the single parameter Weierstrass function is used.
 #' @param random If true generates a random phase model.
+#' @param density Density of the grid on which the function is computed.
+#'                For example, if density = 100 then on (0,1) 100 points
+#'                are computed. 
 #' @return The parametrized model.
 #' @export
-weierstrass_a <- function(a, random = TRUE){
-    structure(list(a = a, random = random), class = "weierstrass2")
+weierstrass <- function(a, b = 0, random = TRUE, density = 1){
+    structure(list(a = a, b = b, random = random, density = density), class = "weierstrass")
 }
 
 
@@ -55,7 +46,6 @@ farima <- function(ar, ma, d){
   # check conditions on farima
   structure(list(ar=ar, ma = ma, d = d), class = "farima")
 }
-
 
 #' Create a logistic function model.
 #'
@@ -94,48 +84,32 @@ gen.farima <- function(mod){
   }
 }
 
-#' @export 
-gen.weierstrass <- function(mod){ 
-  a <- mod$a 
-  b <- mod$b
-  random <- mod$random
-  if(!(0 < a) || !(a < 1)) warning("Parameter 'a' is not in (0,1)") 
-  if( a*b < 1) warning("'a*b' is not greater than 1")  
-  n = 0:50
-  theta = 0
-  w <- function(y){
-    f <- function(x){
-         if(random){ theta <- runif(length(n));  
-          }
-      sum((a^n)*cos(2*pi*(b^n)*x + theta))
-      }
-    unlist(Map(f,y))
-  }
-  if(random) cat("true \n")
-  function(n){
-    xx <- 1:n
-    if(!random){ xx <- seq(0, 1, length.out = n)}
-    w(xx)
-  }
-}
-
 #' @export
-gen.weierstrass2 <- function(mod){ 
-  a <- mod$a 
-  random <- mod$random
+gen.weierstrass <- function(mod){ 
+  a       <- mod$a 
+  b       <- mod$b
+  random  <- mod$random
+  density <- mod$density
   if(!(0 < a) || !(a < 1)) warning("Parameter 'a' is not in (0,1)") 
-  n = 0:100
+  # convert a, b to a paramter
+  if (b != 0){
+    if( a*b < 1) warning("'a*b' is not greater than 1")  
+    a <- -log(a)/log(b)
+  }
+  n = 1:50
   theta = 0
   w <- function(y){
     f <- function(x){
-      if(random){ theta <- runif(length(n)) }
-      sum((2^(-a*n)*cos((2^n)*2*pi*x + theta)))
+      if(random){ 
+        # cat("update theta \n");
+        theta <- runif(length(n)) }
+        sum((2^(-a*n)*cos((2^n)*2*pi*x + theta)))
     }
   unlist(Map(f,y))
   }
   function(n){
-    xx <- 1:n
-    if(!random){ xx <- seq(0,1, length.out = n) }
+    xx <- seq(1, n, length.out = n*density)
+    if(!random){ xx <- seq(0.001,1, length.out = n) }
     w(xx)
   }
 }
@@ -143,16 +117,19 @@ gen.weierstrass2 <- function(mod){
 #' @export
 gen.arma <- function(mod){
   # Does not check for unit roots
-  phi <- mod$ar 
+  # fix 
+  phi   <- mod$ar 
   theta <- mod$ma 
-  sd <- mod$sd
+  sd    <- mod$sd
+  stopifnot(length(phi) == length(theta))
+
   burnin <- 200
   function(n){
-    p <- length(phi)
-    q <- length(theta)
-    n1 = burnin + n;
-    a = rnorm(n1 + q, 0,1);
-    z <- double(p)
+    p  <- length(phi)
+    q  <- length(theta)
+    n1 <- burnin + n;
+    a  <- rnorm(n1 + q, 0,1);
+    z  <- double(p)
 
     for(i in seq_along(1:n1)){
        zt = z[i:(i+p-1)]*phi[p:1] + a[i+q] - a[i:(i+q-1)]*theta[q:1];
@@ -194,12 +171,12 @@ mackeyglass <- function(tau = 17,
 
 #' @export 
 gen.mackeyglass <- function(mod){
-  tau   <- mod$tau
-  init  <- mod$init
-  gamma <- mod$gamma
-  beta  <- mod$beta 
-  n     <- mod$n
-  noise <- mod$noise
+  tau    <- mod$tau
+  init   <- mod$init
+  gamma  <- mod$gamma
+  beta   <- mod$beta 
+  n      <- mod$n
+  noise  <- mod$noise
   burnin <- max(tau, 500)
    
   # return function
