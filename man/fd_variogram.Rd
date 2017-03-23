@@ -4,10 +4,10 @@
 \alias{fd_variogram}
 \title{Variogram-based estimate of fractal dimension.}
 \usage{
-fd_variogram(xx)
+fd_variogram(x)
 }
 \arguments{
-\item{xx}{The data}
+\item{x}{The data}
 }
 \value{
 The results from fd.estimate

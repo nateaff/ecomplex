@@ -2,11 +2,15 @@
 % Please edit documentation in R/features.R
 \name{clean_feature}
 \alias{clean_feature}
-\title{export}
+\title{Returns dataframe with feature(s)}
 \usage{
-clean_feature(x, ...)
+clean_feature(feature)
+}
+\arguments{
+\item{feature}{The feature to clean
+export}
 }
 \description{
-export
+Returns dataframe with feature(s)
 }
 

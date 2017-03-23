@@ -4,10 +4,10 @@
 \alias{sample_entropy}
 \title{Compute the sample entropy of the data}
 \usage{
-sample_entropy(xx)
+sample_entropy(x)
 }
 \arguments{
-\item{xx}{The data}
+\item{x}{The data}
 }
 \value{
 Sample entropy

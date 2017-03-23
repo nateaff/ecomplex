@@ -4,10 +4,10 @@
 \alias{permutation_entropy}
 \title{Compute the permutation entropy of a time series.}
 \usage{
-permutation_entropy(xx)
+permutation_entropy(x)
 }
 \arguments{
-\item{xx}{A time series or vector.}
+\item{x}{A time series or vector.}
 }
 \value{
 The permutation entropy of the time series.

@@ -4,10 +4,10 @@
 \alias{ecomp_lift}
 \title{Compute epsilon complexity using lifting}
 \usage{
-ecomp_lift(xx)
+ecomp_lift(x)
 }
 \arguments{
-\item{xx}{The data}
+\item{x}{The data}
 }
 \value{
 The features
