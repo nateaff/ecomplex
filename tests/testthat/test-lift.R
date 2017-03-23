@@ -5,7 +5,7 @@ check_error <- function(ys, ts, omit, j){
 } 
 
 f <- function(){
-  xx <- seq(0,100, 1/20)
+  xx <- seq(0,10, 1/20)
   y1 <- sin(2*xx) + (1/3)*cos((.33*xx)) + exp(-xx) 
   y2 <- .8*cos(12*xx) + .5*cos(9*xx) + exp(-xx)
   ys <- normalize(y1 + y2)
@@ -61,20 +61,20 @@ test_that("inverseWT4 iterated interpolation error is below tolerance",{
 test_that("inverseWT5 interpolation error is below tolerance",{
   ys   <- f()
   ds   <- 6
-  degs  <- c(1,3, 5)
+  degs <- c(1,3, 5)
   tol  <- 0.7;   
   omit <- 20
-  err  <- double(ds*length(degs))
-  ks <-downsample_perm(length(ys), ds)
+  errs  <- double(ds*length(degs))
+  ks   <- downsample_perm(length(ys), ds)
   for(j in 1:length(ks)){
     for(k in seq_along(degs)){
       xs <- ys[ks[[j]]]
       res <- inverseWT5(xs, degs[k])
-      err[(j-1)*3 + k] <- check_error(ys, res, omit, j-1)
-      cat(sprintf("cur err is %f \n", err[j]))
+      errs[(j-1)*3 + k] <- check_error(ys, res, omit, j-1)
+      cat(sprintf("cur err is %f \n", errs[j]))
     }
    }
-      expect_that(max(err) < tol ,is_true())
+      expect_that(max(errs) < tol ,is_true())
 })
 
 

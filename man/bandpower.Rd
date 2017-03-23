@@ -4,10 +4,10 @@
 \alias{bandpower}
 \title{Compute bandpower}
 \usage{
-bandpower(xx)
+bandpower(x)
 }
 \arguments{
-\item{xx}{The data}
+\item{x}{The data}
 }
 \value{
 A data frame of power in each band

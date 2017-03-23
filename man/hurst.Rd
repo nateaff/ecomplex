@@ -4,10 +4,10 @@
 \alias{hurst}
 \title{Corrected Hurst exponent}
 \usage{
-hurst(xx)
+hurst(x)
 }
 \arguments{
-\item{xx}{The data}
+\item{x}{The data}
 }
 \value{
 The features

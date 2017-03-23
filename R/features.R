@@ -50,8 +50,11 @@ extract_one_feature <- function(tseries, feature, ...){
   clean_feature(feature(tseries, ...))
 }
 
+#' Returns dataframe with feature(s)
+#'
+#'@param feature The feature to clean
 #'export
-clean_feature <- function(x, ...) UseMethod("clean_feature")
+clean_feature <- function(feature) UseMethod("clean_feature")
 
 
 clean_feature.FractalDim <- function(feature){
@@ -127,12 +130,12 @@ clean_feature.default <- function(feature){
 #'  entropy over the embedding dimensions 3:7 is
 #'  returned.
 #'
-#' @param xx A time series or vector.
+#' @param x A time series or vector.
 #'
 #' @return The permutation entropy of the time series.
 #' @export
-permutation_entropy <- function(xx){
-  ret <- pdc::entropyHeuristic( xx )
+permutation_entropy <- function(x){
+  ret <- pdc::entropyHeuristic( x )
   row <- which(ret$entropy.values[, 2] == ret$m)
   ret <- ret$entropy.values[row, 3]
   class(ret) <- "permutation_entropy"
@@ -141,13 +144,13 @@ permutation_entropy <- function(xx){
 
 #' Compute the sample entropy of the data
 #'
-#' @param xx The data 
+#' @param x The data 
 #'
 #' @return Sample entropy
 #' @export
-sample_entropy <- function(xx){
+sample_entropy <- function(x){
   cat("sample entropy \n" )
-  ret <- pracma::sample_entropy(xx)
+  ret <- pracma::sample_entropy(x)
   # structure(list(sample_entropy = res), class = "sample_entropy")
   class(ret) <- "sample_entropy"
   ret
@@ -158,13 +161,13 @@ sample_entropy <- function(xx){
 #' The pracma implementation of the corrected Hurst
 #'  exponent
 #' 
-#' @param xx The data 
+#' @param x The data 
 #'
 #' @return The features
 #' @export
 #
-hurst <- function(xx){
-  ret <- pracma::hurstexp(xx, d = 50, display = FALSE)
+hurst <- function(x){
+  ret <- pracma::hurstexp(x, d = 50, display = FALSE)
   class(ret) <- "hurst"
   ret
 }
@@ -172,13 +175,13 @@ hurst <- function(xx){
 #' Variance wrapper
 #'
 #'
-#' @param xx The data 
+#' @param x The data 
 #'
 #' @return The variance
 #' @export
-variance <- function(xx){
+variance <- function(x){
   cat("var \n")
-  ret <- var(xx)
+  ret <- var(x)
   class(ret) <- "variance"
   ret
 }
@@ -186,35 +189,41 @@ variance <- function(xx){
 #' Compute epsilon complexity using lifting 
 #'
 #'
-#' @param xx The data 
+#' @param x The data 
 #'
 #' @return The features
 #' @export
-#' 
-ecomp_lift <- function(xx){
+ecomp_lift <- function(x){
   cat("ecomp lift \n")
-  res <- lift_comp(xx)
-  class(res) <-"ecomp_lift"
+  res <- ecomplex(x, ds = 5, method = "lift", max_degree = 4)
+  class(res) <- "ecomp_lift"
   res
 }
 
 #' Compute epsilon complexity using bsplines
 #'
 #'
-#' @param xx The data 
+#' @param x The data 
 #'
 #' @return The features
 #' @export
-#' 
-ecomp_bspline <- function(xx){
-  cat("ecomp \n")
-  res <- ecomplexity(xx, ds = 5, method = "bspline", max_degree = 4)
+ecomp_bspline <- function(x){
+  cat("ecomp bspline \n")
+  res <- ecomplex(x, ds = 5, method = "bspline", max_degree = 4)
   class(res) <- "ecomp_bspline"
   res
 }
 
-ecomp_cspline <- function(xx){
-  res <- ecomplexity(xx, ds = 5, method = "cspline")
+#' Compute epsilon complexity using bsplines
+#'
+#'
+#' @param x The data 
+#'
+#' @return The features
+#' @export
+ecomp_cspline <- function(x){
+  cat("ecomp cspline \n")
+  res <- ecomplex(x, ds = 5, method = "cspline")
   class(res) <- "ecomp_cspline"
   res
 }
@@ -224,11 +233,11 @@ ecomp_cspline <- function(xx){
 #'
 #' Computes the bandpower on a default set 
 #'   
-#' @param xx The data
+#' @param x The data
 #' 
 #' @return A data frame of power in each band
 #' @export 
-bandpower <- function(xx){
+bandpower <- function(x){
   cat("Bandpower \n")
 
   freqs <- list(
@@ -238,12 +247,12 @@ bandpower <- function(xx){
   beta = c(12, 30),
   gamma = c(30, 100))
 
-  if(!is.ts(xx)){
+  if(!is.ts(x)){
     fs <- 1220
   } else {
-    fs <- frequency(xx)
+    fs <- frequency(x)
   }
-  res <- bp_pgram(xx, fs=fs, freqs=freqs)
+  res <- bp_pgram(x, fs=fs, freqs=freqs)
   class(res) <- "bandpower"
   res
 }
@@ -254,13 +263,13 @@ bandpower <- function(xx){
 #' This function is a wrapper for the fd.estimate 
 #' function of the fractaldim package.
 #'
-#' @param xx The data
+#' @param x The data
 #'
 #' @return The results from fd.estimate
 #' @export
-fd_variogram <- function(xx){
+fd_variogram <- function(x){
   cat("fd_variogram \n")
-  fractaldim::fd.estimate(xx, methods = "variogram") 
+  fractaldim::fd.estimate(x, methods = "variogram") 
 }
 
 #Temp 

@@ -20,4 +20,5 @@ Imports:
   fracdiff,
   fractaldim,
   pdc, 
-  plyr
+  plyr,
+  memoise

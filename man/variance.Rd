@@ -4,10 +4,10 @@
 \alias{variance}
 \title{Variance wrapper}
 \usage{
-variance(xx)
+variance(x)
 }
 \arguments{
-\item{xx}{The data}
+\item{x}{The data}
 }
 \value{
 The variance
