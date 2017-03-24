@@ -33,7 +33,6 @@ ecomplex <- function(x, method = c("bspline", "cspline", "lift"),
 
   epsilons <- get_epsilons(func)  
   S <- 1/(2:(length(epsilons)+1))
-  cat("len", length(epsilons), "\n")
   fit <- NA  
   try({      
      fit <- lm(log(epsilons) ~ log(S))   
@@ -109,22 +108,21 @@ bspline_err <- function(y, sample_num, max_degree){
     ind       = 1:length(x)
     hold_out  = ind[-cur_knots];
     # errs holds the absolue errors for each index set
-    errs <- matrix(length(hold_out)*max_degree, 
-                         nrow = max_degree, 
-                         ncol = length(hold_out))
+    errs <- matrix(0, nrow = max_degree, ncol = length(hold_out))
     for (deg in 1:max_degree){
         basis  <- splines::bs(x, knots = cur_knots, degree = deg)
         yhat <- NA  
         try({      
            fit      <- lm(y ~ basis, data = df);
+           # Average on full prediction 
            yhat     <- stats::predict(fit)[hold_out]
-           errs[deg,] <- abs(y[hold_out] - yhat)
+           errs[deg,] <- abs(y[hold_out] - yhat)/length(y)
         }, silent = T )
     }
     if(any(is.na(errs[deg,]))){ 
       epsilons[k] <- NA 
     } else {
-      epsilons[k]  <- min(apply(errs, 1, sum))/length(y) 
+      epsilons[k]  <- min(apply(errs, 1, sum)) 
     }
   }
   return(mean(epsilons))
@@ -141,8 +139,12 @@ cspline_err <- function(y, sample_num, max_degree = NULL){
     ind = indices[[k]]
     xout  = x[-ind];
     yout <- spline(ind, y[ind], xout = xout)
-    epsilons[k]  <- sum(abs(yout$y - y[-ind])) 
+    # Average as if full prediction
+    epsilons[k]  <- sum(abs(yout$y - y[-ind]))/length(y) 
   }
   return(mean(epsilons))
 }
+
+
+
 

@@ -23,8 +23,8 @@ pfilter1 <- function(degree, pos){
     ymat <- diag(N)
     for(j in 1:length(eval)){
         for(k in 1:N){
-            ys <- ymat[k,]
-            cmat[j,k] <- pracma::neville(pos, ys, eval[j])
+            y <- ymat[k,]
+            cmat[j,k] <- pracma::neville(pos, y, eval[j])
         }
     }
     cmat
@@ -39,8 +39,8 @@ pfilter2 <- function(degree, pos){
   ymat <- diag(N)
   for(j in 1:length(eval)){
       for(k in 1:N){
-          ys <- ymat[k,]
-          cmat[j,k] <- pracma::neville(pos, ys, eval[j])
+          y <- ymat[k,]
+          cmat[j,k] <- pracma::neville(pos, y, eval[j])
       }
   }
   cmat
@@ -53,8 +53,8 @@ pfilter3 <- function(degree, pos){
   ymat <- diag(N)
   for(j in 1:length(eval)){
       for(k in 1:N){
-          ys <- ymat[k,]
-          cmat[j,k] <- pracma::neville(pos, ys, eval[j])
+          y <- ymat[k,]
+          cmat[j,k] <- pracma::neville(pos, y, eval[j])
       }
   }
   cmat
@@ -109,8 +109,8 @@ filters3 <- function(){
 
 
 
-predict <- function(ys, filter){
-    sum(ys*filter)
+predict <- function(y, filter){
+    sum(y*filter)
 }
 
 
@@ -274,23 +274,23 @@ iwt_mod <- function(ds){
 }
 
 
-check_resid <- function(ys, ts, omit, j){
-    yrange <- (omit+j):(length(ys) - omit)
-    trange <- (omit):(length(ys)-omit -j)
-    sum(abs(ts[trange] - ys[yrange]))/length(trange)
+check_resid <- function(y, est, omit, j){
+    yrange <- (omit + j):(length(y) - omit)
+    erange <- (omit):(length(y) - omit - j)
+    sum(abs(est[erange] - y[yrange])/length(erange))
 }
 
 
 
-interp_err <- function(ys, iwt) {
-
-  errs  <- matrix(0, nrow = iwt$ds, ncol = length(iwt$degs))
-  ks <-downsample_perm(length(ys), iwt$ds)
+interp_err <- function(y, iwt) {
+  big_num <- 1e6
+  errs  <- matrix(big_num, nrow = iwt$ds, ncol = length(iwt$degs))
+  ks <-downsample_perm(length(y), iwt$ds)
   for(j in 1:iwt$ds){
     for(k in seq_along(iwt$degs)){
-      xs <- ys[ks[[j]]]
+      xs <- y[ks[[j]]]
       res <- iwt$inverse(xs, iwt$degs[k])      
-      errs[j, k] <- check_resid(ys, res, iwt$omit, j-1)
+      errs[j, k] <- check_resid(y, res, iwt$omit, j - 1)
       # cat(sprintf("cur err is %f \n", max(errs[j,k])))
     }
   }
@@ -300,16 +300,16 @@ interp_err <- function(ys, iwt) {
 
 
 # # 
-# interp_err.iwt3 <- function(iwt, ys) 
+# interp_err.iwt3 <- function(iwt, y) 
 # {
 #   errs  <- matrix(0, nrow = iwt$ds, ncol = length(iwt$degs))
-#   ks <-downsample_perm(length(ys), iwt$ds)
+#   ks <-downsample_perm(length(y), iwt$ds)
 #   for(j in 1:iwt$ds){
 #     for(k in seq_along(iwt$degs)){
-#       xs <- ys[ks[[j]]]
+#       xs <- y[ks[[j]]]
 #       res <- inverseWT1(xs, iwt$degs[k])
 #       res <- inverseWT1(res, iwt$degs[k])
-#       errs[j, k] <- check_resid(ys, res, iwt$omit, j-1)
+#       errs[j, k] <- check_resid(y, res, iwt$omit, j-1)
 #       # cat(sprintf("cur err is %f \n", max(errs[j,k])))
 #     }
 #   }
