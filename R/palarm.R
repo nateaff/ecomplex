@@ -87,7 +87,7 @@ ksinverse <- function(pf, M){
 ystat <- function(X, delta, m){
   N <- length(X)
   Y <- 1:(N-1)
-  stopifnot(N > 1)
+  stopifnot( N > 1 )
   stat <- rep(1, N)
   M1 <- cumsum(X[1:(N-1)])/Y
   M2 <- rev(cumsum(rev(X[2:N]))/Y)
@@ -160,21 +160,25 @@ palarmf <- function( X,
 #' @param delta Detect parameter.
 #' @param m Minimum interval size.
 #' @param thresh Minimum statistic for change point characterization.
-#' 
+#' (
 #' @return kout Estimated global change points.
 diagn <- function(x, kin, delta, m, thresh){
   N <- length(x); 
   Z <- length(kin); 
   kout <- double(0)
   # Some change points found
+  
   if(length(kin) > 1) {
     b <- floor((kin[2] + kin[1])/2); a <- 0;
     kout <- check_pt(x[1:b], a, delta, m, thresh, kout)
-    for(i in 2:(length(kin) -1)){
-      a <- floor((kin[i]+ kin[i-1])/2)+1
-      b <- floor((kin[i+1] + kin[i])/2)
-      kout <- check_pt(x[a:b], a, delta, m, thresh, kout)
-    } # end for
+    if(length(kin) > 2){
+      for(i in 2:(length(kin)-1)){
+        a <- floor((kin[i] + kin[i - 1])/2) + 1
+        b <- floor((kin[i + 1] + kin[i])/2)
+        cat(sprintf("diag a:%s b:%s \n", a, b))
+        kout <- check_pt(x[a:b], a, delta, m, thresh, kout)
+      } # end for
+    }
     # final change point 
     a <- round((kin[Z]+ kin[Z-1])/2)
     b = N;
@@ -239,16 +243,20 @@ if(length(kin)>1) {
         meanK <- me*rep(1, (stats$k - 1))
         } else {
         meanK <- double(0)
-      }
+    }
       kout <- c(kout, stats$k)
-    for(i in 2:(length(kin)-1)){
-        a <- floor((kin[i] + kin[i-1] )/2) + 1
-        b <- floor((kin[i+1] + kin[i])/2)
-        stats <- ystat(X[a:b], delta,m)
-        kout <- c(kout, a + stats$k - 1 )
-        M1 <- mean(xin[(kout[i-1]+1):(kout[i]-1)])
-        M2 <- M1*(rep(1, kout[i]-kout[i-1] ))
-        meanK <- c(meanK, M2)
+    # 
+    if(length(kin) > 2 ){
+      for(i in 2:(length(kin)-1)){
+          a <- floor((kin[i] + kin[i-1] )/2) + 1
+          b <- floor((kin[i+1] + kin[i])/2)
+          cat(sprintf("finalal a:%s b:%s \n", a, b))
+          stats <- ystat(X[a:b], delta,m)
+          kout <- c(kout, a + stats$k - 1 )
+          M1 <- mean(xin[(kout[i-1]+1):(kout[i]-1)])
+          M2 <- M1*(rep(1, kout[i]-kout[i-1] ))
+          meanK <- c(meanK, M2)
+      }
     }
     a <- round((kin[Z] + kin[Z-1])/2)
     X1 <- X[a:N]

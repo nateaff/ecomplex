@@ -7,7 +7,7 @@ f <- function(){
   ys <- normalize(y1 + y2)
 }
 
-test_that("ecomplex return correctly formatted list", {
+test_that("ecomplex does not return NA's", {
   x <- rnorm(128)
   x <- f()
   fit1 <- ecomplex(x, ds = 6, max_degree = 5, method = "bspline")
