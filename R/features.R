@@ -311,7 +311,7 @@ eeg_features <- function(x, features = NULL, multicore = TRUE){
   features <- c(ecomp_bspline, bandpower, fd_variogram)
   }
 
-  df <- extract_features(x, features, id = "1", multicore = multicore)
+  df <- extract_features(x, features, id = "1", ncores = multicore)
   df
 } 
 

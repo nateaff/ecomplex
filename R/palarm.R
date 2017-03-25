@@ -22,6 +22,7 @@
 #' \code{kout} \tab Vector of indices of the detected change points,\cr
 #' \code{means} \tab Vector of mean values on each stationary segment. \cr
 #' }
+#'@export
 palarm <- function(x, delta1 =1, 
                       delta2 = 0, 
                       pf = 0.1, 
