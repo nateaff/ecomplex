@@ -3,7 +3,7 @@
 #' @param data A time series, matrix of dataframe. 
 #' @param features A list or vector of ts_features.
 #' @param id Optional prefix for column headers.
-#' @param multicore Parallelize feature extraction (Linux only).
+#' @param ncores Parallelize feature extraction (Linux only).
 #' @param verbose Print status to console.
 #' 
 #' @return A data frame with row of features for each time.
@@ -11,10 +11,10 @@
 #'  check for parallelization)
 #'  
 #' @export 
-extract_features <- function(data, features, id = "1", multicore = TRUE, verbose = FALSE){
+extract_features <- function(data, features, id = "1", ncores = NULL, verbose = FALSE){
 
   # TODO: switch for system type
-  if(multicore){
+  if(!is.null(ncores)){
    cores <- parallel::detectCores()
    if(verbose) cat("Using", cores, " cores ... \n")
   }
@@ -30,7 +30,7 @@ extract_features <- function(data, features, id = "1", multicore = TRUE, verbose
     stopifnot(is.data.frame(data))
 
     f <- function(feature){
-      if(multicore){
+      if(!is.null(ncores)){
         ret <- parallel::mclapply(data, function(x) extract_one_feature(x, feature), 
                         mc.cores = cores)
       } else {
@@ -110,6 +110,10 @@ clean_feature.permutation_entropy <- function(feature){
   plyr::unrowname(data.frame(p_entropy = feature[1]))
 }
 
+clean_feature.spectral_entropy <- function(feature){
+    plyr::unrowname(data.frame(spec_entropy = feature[1]))
+}
+
 clean_feature.wvar <- function(feature){
   wav_var <- feature$variance[1:4]
   fnames <- paste0("wvar_", feature$scales[1:4])
@@ -135,6 +139,7 @@ clean_feature.default <- function(feature){
 #' @return The permutation entropy of the time series.
 #' @export
 permutation_entropy <- function(x){
+  cat("permutation entropy \n")
   ret <- pdc::entropyHeuristic( x )
   row <- which(ret$entropy.values[, 2] == ret$m)
   ret <- ret$entropy.values[row, 3]
@@ -167,6 +172,7 @@ sample_entropy <- function(x){
 #' @export
 #
 hurst <- function(x){
+  cat("hurst \n")
   ret <- pracma::hurstexp(x, d = 50, display = FALSE)
   class(ret) <- "hurst"
   ret
@@ -229,6 +235,22 @@ ecomp_cspline <- function(x){
 }
 
 
+#' Compute spectral entropy
+#'
+#' Computes the entropy of the binned spectrogram.
+#'  Wrapper of ForeCA package function.
+#'
+#' @param  x Time series
+#'
+#' @return  return 
+#' @export
+spectral_entropy <- function(x){
+  cat("spectral entropy \n")
+  ret <- ForeCA::spectral_entropy(x)
+  class(ret) <- "spectral_entropy"
+  ret
+}
+
 #' Compute bandpower
 #'
 #' Computes the bandpower on a default set 
@@ -253,6 +275,7 @@ bandpower <- function(x){
     fs <- frequency(x)
   }
   res <- bp_pgram(x, fs=fs, freqs=freqs)
+  res <- lapply(res, log)
   class(res) <- "bandpower"
   res
 }
@@ -291,4 +314,6 @@ eeg_features <- function(x, features = NULL, multicore = TRUE){
   df <- extract_features(x, features, id = "1", multicore = multicore)
   df
 } 
+
+
 

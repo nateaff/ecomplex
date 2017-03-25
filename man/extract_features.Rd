@@ -4,8 +4,7 @@
 \alias{extract_features}
 \title{Extract set of features from a time series.}
 \usage{
-extract_features(data, features, id = "1", multicore = TRUE,
-  verbose = FALSE)
+extract_features(data, features, id = "1", ncores = NULL, verbose = FALSE)
 }
 \arguments{
 \item{data}{A time series, matrix of dataframe.}
@@ -14,7 +13,7 @@ extract_features(data, features, id = "1", multicore = TRUE,
 
 \item{id}{Optional prefix for column headers.}
 
-\item{multicore}{Parallelize feature extraction (Linux only).}
+\item{ncores}{Parallelize feature extraction (Linux only).}
 
 \item{verbose}{Print status to console.}
 }
