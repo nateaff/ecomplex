@@ -1,27 +1,3 @@
-
-
-test_that("palarm does not return nans/NAs", {
-
-  test1 <- palarm(1:10)
-  test2 <- palarm(problem())
-  test3 <- palarm(runif(200))
-  test4 <- palarm(rnorm(100))
-
-  expect_that(any(is.na(test1$kout), is_false())
-  expect_that(any(is.na(test1$means), is_false())
-  expect_that(any(is.na(test2$kout), is_false())
-  expect_that(any(is.na(test2$means), is_false())
-  expect_that(any(is.na(test3$kout), is_false())
-  expect_that(any(is.na(test3$means), is_false())
-  expect_that(any(is.na(test4$kout), is_false())
-  expect_that(any(is.na(test4$means), is_false())
-})
-
-test_that("palarm throws the correct erros"){
-
- expect_error(palarm(0))
-}
-
 problem <- function(){
      c(0.82680105, 0.18305439, 0.00000000, 0.03675331, 0.92842346, 0.21954411,
        0.09442255, 0.26646925, 0.04393944, 0.32208523, 0.05664698, 0.13016508,
@@ -34,3 +10,25 @@ problem <- function(){
        0.13117171, 0.09356542, 0.35028482, 0.16133553, 0.11510450, 0.13768223,
       0.05022654, 0.08964114, 0.11203881, 0.09971774, 0.10054290, 0.04440902)
 }
+
+test_that("palarm does not return nans/NAs", {
+
+  test1 <- palarm(1:10)
+  test2 <- palarm(problem())
+  test3 <- palarm(runif(200))
+  test4 <- palarm(rnorm(100))
+
+  expect_that(any(is.na(test1$kout)), is_false())
+  expect_that(any(is.na(test1$means)), is_false())
+  expect_that(any(is.na(test2$kout)), is_false())
+  expect_that(any(is.na(test2$means)), is_false())
+  expect_that(any(is.na(test3$kout)), is_false())
+  expect_that(any(is.na(test3$means)), is_false())
+  expect_that(any(is.na(test4$kout)), is_false())
+  expect_that(any(is.na(test4$means)), is_false())
+})
+
+test_that("palarm throws the correct erros",{
+  expect_error(palarm(0))
+})
+

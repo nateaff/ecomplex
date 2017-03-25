@@ -11,7 +11,7 @@
 #' @return A list of features or the slope coefficient of the fit.
 #'
 #'@export
-ecomplex <- function(x, method = c("bspline", "cspline", "lift"), 
+ecomplex <- function(x, method = c("cspline", "bspline", "lift"), 
                         ds = 6, 
                         max_degree = 5){
 

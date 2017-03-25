@@ -4,7 +4,7 @@
 \alias{ecomplex}
 \title{Compute the epsilon-complexity of a time series.}
 \usage{
-ecomplex(x, method = c("bspline", "cspline", "lift"), ds = 6,
+ecomplex(x, method = c("cspline", "bspline", "lift"), ds = 6,
   max_degree = 5)
 }
 \arguments{

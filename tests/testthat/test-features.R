@@ -1,6 +1,7 @@
+context('features')
 
 test_that("feature output is the correct length", {
-  f <- seq(0,1, length.out = 600)
+  f <- seq(0,1, length.out = 200)
 
   elift_feat <- clean_feature(ecomp_lift(f))
   expect_that(all.equal( dim(elift_feat),c(1,2) ), is_true())
@@ -23,11 +24,14 @@ test_that("feature output is the correct length", {
   sen_feat <- clean_feature(sample_entropy(f))
   expect_that(all.equal( dim(sen_feat), c(1,1) ), is_true())
 
+  spec_feat <- clean_feature(spectral_entropy(f))
+  expect_that(all.equal( dim(spec_feat), c(1,1) ), is_true())
+
 })
 
 
 test_that("feature output is numeric", {
-  f <- seq(0,1, length.out = 600)
+  f <- seq(0,1, length.out = 200)
 
   elift_feat <- clean_feature(ecomp_lift(f))
   expect_that(all(apply(elift_feat, 2, is.numeric)), is_true())
@@ -50,6 +54,9 @@ test_that("feature output is numeric", {
 
   sen_feat <- clean_feature(sample_entropy(f))
   expect_that(all(apply(sen_feat, 2, is.numeric)), is_true())
+
+  spec_feat <- clean_feature(spectral_entropy(f))
+  expect_that(all(apply(spec_feat, 2, is.numeric)), is_true())
 
 })
 
