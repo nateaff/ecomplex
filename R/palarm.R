@@ -176,7 +176,6 @@ diagn <- function(x, kin, delta, m, thresh){
       for(i in 2:(length(kin)-1)){
         a <- floor((kin[i] + kin[i - 1])/2) + 1
         b <- floor((kin[i + 1] + kin[i])/2)
-        cat(sprintf("diag a:%s b:%s \n", a, b))
         kout <- check_pt(x[a:b], a, delta, m, thresh, kout)
       } # end for
     }
@@ -251,7 +250,6 @@ if(length(kin)>1) {
       for(i in 2:(length(kin)-1)){
           a <- floor((kin[i] + kin[i-1] )/2) + 1
           b <- floor((kin[i+1] + kin[i])/2)
-          cat(sprintf("finalal a:%s b:%s \n", a, b))
           stats <- ystat(X[a:b], delta,m)
           kout <- c(kout, a + stats$k - 1 )
           M1 <- mean(xin[(kout[i-1]+1):(kout[i]-1)])

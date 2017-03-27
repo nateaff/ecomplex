@@ -295,25 +295,4 @@ fd_variogram <- function(x){
   fractaldim::fd.estimate(x, methods = "variogram") 
 }
 
-#Temp 
-
-#' Extract eeg features 
-#'
-#' @param x The number of time series generated for each group
-#' @param features The features set to run 
-#' @param multicore Parallelize computations (Linux only)
-#'
-#' @return A data frame with features as columns and an id
-#'  column identifying group membership
-#' @export
-eeg_features <- function(x, features = NULL, multicore = TRUE){
-  if (is.null(features)){
-  features <- c(ecomp_bspline, bandpower, fd_variogram)
-  }
-
-  df <- extract_features(x, features, id = "1", ncores = multicore)
-  df
-} 
-
-
 
