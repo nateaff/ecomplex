@@ -296,4 +296,3 @@ bandpower <- function(x){
 fd_variogram <- function(x){
   cat("fd_variogram \n")
   fractaldim::fd.estimate(x, methods = "variogram") 
-}
