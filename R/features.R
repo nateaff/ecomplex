@@ -3,45 +3,40 @@
 #' @param data A time series, matrix of dataframe. 
 #' @param features A list or vector of ts_features.
 #' @param id Optional prefix for column headers.
-#' @param multicore Parallelize feature extraction (Linux only).
+#' @param ncores Parallelize feature extraction (Linux only).
 #' @param verbose Print status to console.
 #' 
 #' @return A data frame with row of features for each time.
-#'  series in data. (TODO: single feature, system 
-#'  check for parallelization)
+#'  series in data. 
 #'  
 #' @export 
-extract_features <- function(data, features, id = "1", multicore = TRUE, verbose = FALSE){
+extract_features <- function(data, features, id = "1", 
+                                             ncores = FALSE, 
+                                             verbose = FALSE){
 
   # TODO: switch for system type
-  if(multicore){
+  data <- as.data.frame(data)
+  if(anyNA(x)) stop("Data contains NA values")
+  
+  if(ncores){
    cores <- parallel::detectCores()
    if(verbose) cat("Using", cores, " cores ... \n")
   }
-  # TODO : single feature 
-  if(is.vector(data) || class(data) == "ts"){
-    cat("ts")
-    ret <- extract_one_feature(as.vector(data), features)
-    ret$id <- id
-  } else {
-    if(is.matrix(data)) {
-      data <- as.data.frame(data) 
+  if(length(features) == 1) features <- list(features)
+  
+  f <- function(feature){
+    if(ncores){
+      ret <- parallel::mclapply(data, 
+                                function(x) extract_one_feature(x, feature), 
+                                mc.cores = ncores)
+    } else {
+      ret <- lapply(data, function(x) extract_one_feature(x, feature))
     }
-    stopifnot(is.data.frame(data))
+  do.call(rbind, ret)
+  }
 
-    f <- function(feature){
-      if(multicore){
-        ret <- parallel::mclapply(data, function(x) extract_one_feature(x, feature), 
-                        mc.cores = cores)
-      } else {
-        ret <- lapply(data, function(x) extract_one_feature(x, feature))
-      }
-    do.call(rbind, ret)
-    }
-
-    ret <- do.call(cbind,(lapply(features, f))) 
-    ret$id <- id
-  } # end else
+  ret <- do.call(cbind, (lapply(features, f))) 
+  ret$id <- id
   ret 
 } 
 
@@ -271,24 +266,3 @@ fd_variogram <- function(x){
   cat("fd_variogram \n")
   fractaldim::fd.estimate(x, methods = "variogram") 
 }
-
-#Temp 
-
-#' Extract eeg features 
-#'
-#' @param x The number of time series generated for each group
-#' @param features The features set to run 
-#' @param multicore Parallelize computations (Linux only)
-#'
-#' @return A data frame with features as columns and an id
-#'  column identifying group membership
-#' @export
-eeg_features <- function(x, features = NULL, multicore = TRUE){
-  if (is.null(features)){
-  features <- c(ecomp_bspline, bandpower, fd_variogram)
-  }
-
-  df <- extract_features(x, features, id = "1", multicore = multicore)
-  df
-} 
-
