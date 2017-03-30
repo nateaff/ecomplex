@@ -99,7 +99,10 @@ clean_feature.sample_entropy <- function(feature){
 }
 
 clean_feature.hurst <- function(feature){
-  plyr::unrowname(data.frame(hurst = feature$Hs))
+  # change to Hal = (R/S -AL)
+  # plyr::unrowname(data.frame(hurst = feature$Hs))
+  plyr::unrowname(data.frame(hurst = feature$Hal))
+
 }
 
 clean_feature.variance <- function(feature){
