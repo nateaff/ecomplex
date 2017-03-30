@@ -16,7 +16,7 @@ extract_features <- function(data, features, id = "1",
 
   # TODO: switch for system type
   data <- as.data.frame(data)
-  if(anyNA(x)) stop("Data contains NA values")
+  if(anyNA(data)) stop("Data contains NA values")
   
   if(!is.null(ncores)){
    cores <- parallel::detectCores()
@@ -25,7 +25,7 @@ extract_features <- function(data, features, id = "1",
   if(length(features) == 1) features <- list(features)
   
   f <- function(feature){
-    if(ncores){
+    if (!is.null(ncores)) {
       ret <- parallel::mclapply(data, 
                                 function(x) extract_one_feature(x, feature), 
                                 mc.cores = ncores)
