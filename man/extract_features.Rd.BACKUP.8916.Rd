@@ -4,7 +4,12 @@
 \alias{extract_features}
 \title{Extract set of features from a time series.}
 \usage{
+<<<<<<< HEAD
+extract_features(data, features, id = "1", ncores = FALSE,
+  verbose = FALSE)
+=======
 extract_features(data, features, id = "1", ncores = NULL, verbose = FALSE)
+>>>>>>> master
 }
 \arguments{
 \item{data}{A time series, matrix of dataframe.}

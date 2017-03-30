@@ -19,7 +19,8 @@ extract_features(data, features, id = "1", ncores = NULL, verbose = FALSE)
 }
 \value{
 A data frame with row of features for each time.
- series in data.
+ series in data. (TODO: single feature, system 
+ check for parallelization)
 }
 \description{
 Extract set of features from a time series.

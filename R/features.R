@@ -11,14 +11,14 @@
 #'  
 #' @export 
 extract_features <- function(data, features, id = "1", 
-                                             ncores = FALSE, 
+                                             ncores = NULL, 
                                              verbose = FALSE){
 
   # TODO: switch for system type
   data <- as.data.frame(data)
   if(anyNA(x)) stop("Data contains NA values")
   
-  if(ncores){
+  if(!is.null(ncores)){
    cores <- parallel::detectCores()
    if(verbose) cat("Using", cores, " cores ... \n")
   }
@@ -94,7 +94,10 @@ clean_feature.sample_entropy <- function(feature){
 }
 
 clean_feature.hurst <- function(feature){
-  plyr::unrowname(data.frame(hurst = feature$Hs))
+  # change to Hal = (R/S -AL)
+  # plyr::unrowname(data.frame(hurst = feature$Hs))
+  plyr::unrowname(data.frame(hurst = feature$Hal))
+
 }
 
 clean_feature.variance <- function(feature){
@@ -103,6 +106,10 @@ clean_feature.variance <- function(feature){
 
 clean_feature.permutation_entropy <- function(feature){
   plyr::unrowname(data.frame(p_entropy = feature[1]))
+}
+
+clean_feature.spectral_entropy <- function(feature){
+    plyr::unrowname(data.frame(spec_entropy = feature[1]))
 }
 
 clean_feature.wvar <- function(feature){
@@ -130,6 +137,7 @@ clean_feature.default <- function(feature){
 #' @return The permutation entropy of the time series.
 #' @export
 permutation_entropy <- function(x){
+  cat("permutation entropy \n")
   ret <- pdc::entropyHeuristic( x )
   row <- which(ret$entropy.values[, 2] == ret$m)
   ret <- ret$entropy.values[row, 3]
@@ -162,6 +170,7 @@ sample_entropy <- function(x){
 #' @export
 #
 hurst <- function(x){
+  cat("hurst \n")
   ret <- pracma::hurstexp(x, d = 50, display = FALSE)
   class(ret) <- "hurst"
   ret
@@ -224,6 +233,22 @@ ecomp_cspline <- function(x){
 }
 
 
+#' Compute spectral entropy
+#'
+#' Computes the entropy of the binned spectrogram.
+#'  Wrapper of ForeCA package function.
+#'
+#' @param  x Time series
+#'
+#' @return  return 
+#' @export
+spectral_entropy <- function(x){
+  cat("spectral entropy \n")
+  ret <- ForeCA::spectral_entropy(x)
+  class(ret) <- "spectral_entropy"
+  ret
+}
+
 #' Compute bandpower
 #'
 #' Computes the bandpower on a default set 
@@ -248,6 +273,7 @@ bandpower <- function(x){
     fs <- frequency(x)
   }
   res <- bp_pgram(x, fs=fs, freqs=freqs)
+  res <- lapply(res, log)
   class(res) <- "bandpower"
   res
 }

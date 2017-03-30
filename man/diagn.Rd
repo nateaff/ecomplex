@@ -16,7 +16,8 @@ diagn(x, kin, delta, m, thresh)
 
 \item{m}{Minimum interval size.}
 
-\item{thresh}{Minimum statistic for change point characterization.}
+\item{thresh}{Minimum statistic for change point characterization.
+(}
 }
 \value{
 kout Estimated global change points.

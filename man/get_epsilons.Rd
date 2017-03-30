@@ -2,18 +2,26 @@
 % Please edit documentation in R/ecomplex.R
 \name{get_epsilons}
 \alias{get_epsilons}
-\title{Generate a function from a model}
+\title{Compute epsilon errors for a time series.}
 \usage{
-get_epsilons(mod)
+get_epsilons(func)
 }
 \arguments{
-\item{mod}{A function model}
+\item{func}{A structure with the time series, interpolation method, 
+and parameters for the method.}
 }
 \value{
-Returns a function based on the model 
- parameters in mod
+A \code{list} with :
+\tabular{ll}{
+\code{epsilons} \tab The mean sum of absolute errors at each level \cr
+\code{methods}  \tab The method used or a list of methods if method 
+                     "all" is used. 
+}
 }
 \description{
-Generate a function from a model
+Computes the mean absolute error (MAE) of a time
+ series for each downsample level using an 
+ interpolation (or approximation) method of type
+ basis-spline, cubic spline or lifting sche
 }
 
