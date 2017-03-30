@@ -13,32 +13,31 @@
 #'@export
 ecomplex <- function(x, method = c("cspline", "bspline", "lift"), 
                         ds = 6, 
-                        max_degree = 5){
+                        max_degree = 5) {
 
-  if(!is.null(dim(x))) stop("data must be a vector of numeric values")
+  if (!is.null(dim(x))) stop("Data must be a vector of numeric values")
   x <- as.numeric(x)
-  if(anyNA(x))         stop("data contains NA values")
-  if(length(x) < 100)  warning("complexity estimate may not be stable + 
-                                for short series")
-  if(!is.numeric(x))   warning("data must be a numeric vector")
-  
-  x        <- normalize(x)
-  method   <- match.arg(method)
+  if (anyNA(x))         stop("Data contains NA values")
+  if (length(x) < 100)  warning("Complexity estimate may not be stable ", 
+                                "for short series")  
+  x      <- normalize(x)
+  method <- match.arg(method)
  
-  cat("method", method, "\n")
   func <- structure(list(x     = x, 
                          ds    = ds, 
                          deg   = max_degree),
                          class = method)
 
   epsilons <- get_epsilons(func)  
-  S <- 1/(2:(length(epsilons)+1))
+  S   <- 1 / (2:(length(epsilons) + 1))
   fit <- NA  
   try({      
      fit <- lm(log(epsilons) ~ log(S))   
   }, silent = FALSE )
   
-  structure(list(fit     = fit, 
+  structure(list(A        = unname(coefficients(fit)[1]),
+                 B        = unname(coefficients(fit)[2]),
+                 fit      = fit, 
                  epsilons = epsilons, 
                  S        = S,
                  method   = method), 
@@ -56,8 +55,8 @@ get_epsilons <- function(mod) UseMethod("get_epsilons")
 get_epsilons.bspline <- function(func){
   epsilons <- double(func$ds - 1)
   ds <- 2:func$ds
-    for(k in ds){
-    epsilons[k-1] <- bspline_err(func$x, sample_num = k, max_degree = func$deg)
+    for (k in ds) {
+    epsilons[k - 1] <- bspline_err(func$x, sample_num = k, max_degree = func$deg)
   }
   epsilons
 }
@@ -65,8 +64,8 @@ get_epsilons.bspline <- function(func){
 get_epsilons.cspline <- function(func){
   epsilons <- double(func$ds - 1)
   ds <- 2:func$ds
-    for(k in ds){
-    epsilons[k-1] <- cspline_err(func$x, k, func$max_degree)
+    for (k in ds) {
+    epsilons[k - 1] <- cspline_err(func$x, sample_num = k, max_degree = func$deg)
   }
   epsilons
 }
@@ -86,7 +85,7 @@ get_epsilons.cspline <- function(func){
 #' \code{epsilons} \tab The mean sum of absolute errors at each level \cr
 #' \code{S}     \tab The fraction of points removed at each level 
 #'}
-get_epsilons.lift <- function(func){
+get_epsilons.lift <- function(func) {
   ds <- min(func$ds, 6)
   epsilons <- unlist(lapply((2:ds), function(y) interp_err(func$x, iwt_mod(y))))
 }
@@ -97,32 +96,32 @@ get_epsilons.lift <- function(func){
 #' @param sample_num   The amount the series is downsampled.
 #' @param max_degree   The maximum degree spline polynomial to fit.
 #' @export
-bspline_err <- function(y, sample_num, max_degree){
+bspline_err <- function(y, sample_num, max_degree) {
   x <- 1:length(y)
   df <- data.frame(x = x, y = y); 
   indices  <- downsample_perm(length(y), sample_num);#
   # minimum error for each permutation
   epsilons <- double(length(indices))
   for (k in 1:sample_num) {
-    cur_knots = indices[[k]]
-    ind       = 1:length(x)
-    hold_out  = ind[-cur_knots];
+    cur_knots <- indices[[k]]
+    ind       <- 1:length(x)
+    hold_out  <- ind[-cur_knots];
     # errs holds the absolue errors for each index set
     errs <- matrix(0, nrow = max_degree, ncol = length(hold_out))
-    for (deg in 1:max_degree){
+    for (deg in 1:max_degree) {
         basis  <- splines::bs(x, knots = cur_knots, degree = deg)
         yhat <- NA  
         try({      
            fit      <- lm(y ~ basis, data = df);
            # Average on full prediction 
            yhat     <- stats::predict(fit)[hold_out]
-           errs[deg,] <- abs(y[hold_out] - yhat)/length(y)
+           errs[deg,] <- abs(y[hold_out] - yhat) / length(y)
         }, silent = T )
     }
-    if(any(is.na(errs[deg,]))){ 
+    if (any(is.na(errs[deg, ]))) { 
       epsilons[k] <- NA 
-    } else {
-      epsilons[k]  <- min(apply(errs, 1, sum)) 
+    } else { 
+      epsilons[k] <- min(apply(errs, 1, sum)) 
     }
   }
   return(mean(epsilons))
@@ -130,21 +129,17 @@ bspline_err <- function(y, sample_num, max_degree){
 
 
 # return mean errors for given sample_num
-cspline_err <- function(y, sample_num, max_degree = NULL){
+cspline_err <- function(y, sample_num, max_degree = NULL) {
   x <- 1:length(y)
   indices  <- downsample_perm(length(y), sample_num);
 
   epsilons <- double(length(indices))
   for (k in 1:sample_num) {
-    ind = indices[[k]]
-    xout  = x[-ind];
+    ind  <- indices[[k]]
+    xout <- x[-ind];
     yout <- spline(ind, y[ind], xout = xout)
-    # Average as if full prediction
-    epsilons[k]  <- sum(abs(yout$y - y[-ind]))/length(y) 
+    # Average assuming sample points fit is exact
+    epsilons[k]  <- sum(abs(yout$y - y[-ind])) / length(y) 
   }
   return(mean(epsilons))
 }
-
-
-
-
