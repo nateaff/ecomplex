@@ -22,4 +22,5 @@ Imports:
   pdc, 
   plyr,
   ForeCA,
+  fArma,
   memoise
