@@ -44,7 +44,7 @@ weierstrass <- function(a, b = 0, random = TRUE, density = 1){
 #' @export
 farima <- function(ar, ma, d){
   # check conditions on farima
-  structure(list(ar=ar, ma = ma, d = d), class = "farima")
+  structure(list(ar = ar, ma = ma, d = d), class = "farima")
 }
 
 #' Create a logistic function model.
@@ -66,6 +66,14 @@ quadratic <- function(x0){
   structure(list(x0 = x0), class = "quadratic")
 }
 
+#' Create a fractional Brownian motion function model. 
+#'
+#' @param H The Hurst exponent
+#' @return A model for fractional Brownian motion.
+#' @export
+fBm <- function(H){
+  structure(list(H = H), class = "fBm")
+}
 
 
 #' Generate a function from a model
@@ -75,6 +83,14 @@ quadratic <- function(x0){
 #'  parameters in mod 
 #' @export
 gen <- function(mod) UseMethod("gen")
+
+#' @export 
+gen.fBm <- function(mod){
+  H = mod$H
+  function(n) {
+    fArma::fbmSim(n, H, method = "mvn", doplot = FALSE, fgn = FALSE)
+  }
+}
 
 #' @export
 gen.farima <- function(mod){
