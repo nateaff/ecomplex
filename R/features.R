@@ -7,41 +7,36 @@
 #' @param verbose Print status to console.
 #' 
 #' @return A data frame with row of features for each time.
-#'  series in data. (TODO: single feature, system 
-#'  check for parallelization)
+#'  series in data. 
 #'  
 #' @export 
-extract_features <- function(data, features, id = "1", ncores = NULL, verbose = FALSE){
+extract_features <- function(data, features, id = "1", 
+                                             ncores = NULL, 
+                                             verbose = FALSE){
 
   # TODO: switch for system type
+  data <- as.data.frame(data)
+  if(anyNA(data)) stop("Data contains NA values")
+  
   if(!is.null(ncores)){
    cores <- parallel::detectCores()
    if(verbose) cat("Using", cores, " cores ... \n")
   }
-  # TODO : single feature 
-  if(is.vector(data) || class(data) == "ts"){
-    cat("ts")
-    ret <- extract_one_feature(as.vector(data), features)
-    ret$id <- id
-  } else {
-    if(is.matrix(data)) {
-      data <- as.data.frame(data) 
+  if(length(features) == 1) features <- list(features)
+  
+  f <- function(feature){
+    if (!is.null(ncores)) {
+      ret <- parallel::mclapply(data, 
+                                function(x) extract_one_feature(x, feature), 
+                                mc.cores = ncores)
+    } else {
+      ret <- lapply(data, function(x) extract_one_feature(x, feature))
     }
-    stopifnot(is.data.frame(data))
+  do.call(rbind, ret)
+  }
 
-    f <- function(feature){
-      if(!is.null(ncores)){
-        ret <- parallel::mclapply(data, function(x) extract_one_feature(x, feature), 
-                        mc.cores = cores)
-      } else {
-        ret <- lapply(data, function(x) extract_one_feature(x, feature))
-      }
-    do.call(rbind, ret)
-    }
-
-    ret <- do.call(cbind,(lapply(features, f))) 
-    ret$id <- id
-  } # end else
+  ret <- do.call(cbind, (lapply(features, f))) 
+  ret$id <- id
   ret 
 } 
 
