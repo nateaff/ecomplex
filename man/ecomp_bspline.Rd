@@ -5,14 +5,22 @@
 \title{Compute epsilon complexity using bsplines}
 \usage{
 ecomp_bspline(x)
+
+ecomp_bspline(x)
 }
 \arguments{
+\item{x}{The data}
+
 \item{x}{The data}
 }
 \value{
 The features
+
+The features
 }
 \description{
+Compute epsilon complexity using bsplines
+
 Compute epsilon complexity using bsplines
 }
 

@@ -86,9 +86,11 @@ gen <- function(mod) UseMethod("gen")
 
 #' @export 
 gen.fBm <- function(mod){
-  H = mod$H
+  H <- mod$H
   function(n) {
-    fArma::fbmSim(n, H, method = "mvn", doplot = FALSE, fgn = FALSE)
+    # package needs to be attached(todo)
+    # method "lev" used because it's fast
+    fbmSim(n, H, method = "lev", doplot = FALSE, fgn = FALSE)
   }
 }
 

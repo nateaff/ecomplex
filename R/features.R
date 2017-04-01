@@ -10,7 +10,7 @@
 #'  series in data. 
 #'  
 #' @export 
-extract_features <- function(data, features, id = "1", 
+extract_features <- function(data, features, id = NULL, 
                                              ncores = NULL, 
                                              verbose = FALSE){
 
@@ -36,7 +36,7 @@ extract_features <- function(data, features, id = "1",
   }
 
   ret <- do.call(cbind, (lapply(features, f))) 
-  ret$id <- id
+  if(!is.null(id)) ret$id <- id
   ret 
 } 
 
@@ -89,14 +89,27 @@ clean_feature.ecomp_lift <- function(feature){
   ret
 }
 
+clean_feature.ecomp_all <- function(feature){
+  ret <- plyr::unrowname(data.frame(t(feature$fit$coefficients))) 
+  names(ret) <- paste0("ecomp_all_", c("A", "B"))  
+  ret
+}
+
 clean_feature.sample_entropy <- function(feature){
   plyr::unrowname(data.frame(sample_entropy = feature[1])) 
 }
 
-clean_feature.hurst <- function(feature){
+clean_feature.hurst_pracma <- function(feature){
   # change to Hal = (R/S -AL)
   # plyr::unrowname(data.frame(hurst = feature$Hs))
   plyr::unrowname(data.frame(hurst = feature$Hal))
+
+}
+
+clean_feature.hurst_diffvar <- function(feature){
+  # change to Hal = (R/S -AL)
+  # plyr::unrowname(data.frame(hurst = feature$Hs))
+  plyr::unrowname(data.frame(hurst_diffvar = feature@hurst$H))
 
 }
 
@@ -169,10 +182,28 @@ sample_entropy <- function(x){
 #' @return The features
 #' @export
 #
-hurst <- function(x){
+hurst_pracma <- function(x){
   cat("hurst \n")
   ret <- pracma::hurstexp(x, d = 50, display = FALSE)
-  class(ret) <- "hurst"
+  class(ret) <- "hurst_pracma"
+  ret
+}
+
+#' Corrected Hurst exponent
+#'
+#' Wrappter for fArma diffvarFit. The Hurst exponent
+#'  is slope of the log-log fit of differenced sample
+#'  variances against block size.
+#' 
+#' @param x The data 
+#'
+#' @return The features
+#' @export
+#
+hurst_diffvar <- function(x){
+  cat("hurst \n")
+  ret <- fArma::diffvarFit(x)
+  class(ret) <- "hurst_diffvar"
   ret
 }
 
@@ -199,7 +230,7 @@ variance <- function(x){
 #' @export
 ecomp_lift <- function(x){
   cat("ecomp lift \n")
-  res <- ecomplex(x, ds = 5, method = "lift", max_degree = 4)
+  res <- ecomplex(x, ds = 5, method = "lift", max_degree = 5)
   class(res) <- "ecomp_lift"
   res
 }
@@ -215,6 +246,20 @@ ecomp_bspline <- function(x){
   cat("ecomp bspline \n")
   res <- ecomplex(x, ds = 5, method = "bspline", max_degree = 4)
   class(res) <- "ecomp_bspline"
+  res
+}
+
+#' Compute epsilon complexity using bsplines
+#'
+#'
+#' @param x The data 
+#'
+#' @return The features
+#' @export
+ecomp_bspline <- function(x){
+  cat("ecomp all \n")
+  res <- ecomplex(x, ds = 5, method = "all", max_degree = 5)
+  class(res) <- "ecomp_all"
   res
 }
 
