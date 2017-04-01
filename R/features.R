@@ -106,10 +106,10 @@ clean_feature.hurst_pracma <- function(feature){
 
 }
 
-clean_feature.hurst_diffvar <- function(feature){
+clean_feature.hurst <- function(feature){
   # change to Hal = (R/S -AL)
   # plyr::unrowname(data.frame(hurst = feature$Hs))
-  plyr::unrowname(data.frame(hurst_diffvar = feature@hurst$H))
+  plyr::unrowname(data.frame(hurst = feature@hurst$H))
 
 }
 
@@ -199,11 +199,10 @@ hurst_pracma <- function(x){
 #'
 #' @return The features
 #' @export
-#
-hurst_diffvar <- function(x){
+hurst <- function(x){
   cat("hurst \n")
   ret <- fArma::diffvarFit(x)
-  class(ret) <- "hurst_diffvar"
+  class(ret) <- "hurst"
   ret
 }
 
@@ -256,7 +255,7 @@ ecomp_bspline <- function(x){
 #'
 #' @return The features
 #' @export
-ecomp_bspline <- function(x){
+ecomp_all <- function(x){
   cat("ecomp all \n")
   res <- ecomplex(x, ds = 5, method = "all", max_degree = 5)
   class(res) <- "ecomp_all"

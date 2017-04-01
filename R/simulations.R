@@ -90,7 +90,7 @@ gen.fBm <- function(mod){
   function(n) {
     # package needs to be attached(todo)
     # method "lev" used because it's fast
-    fbmSim(n, H, method = "lev", doplot = FALSE, fgn = FALSE)
+    fArma::fbmSim(n, H, method = "lev", doplot = FALSE, fgn = FALSE)
   }
 }
 
