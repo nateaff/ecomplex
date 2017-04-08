@@ -85,6 +85,7 @@ fBm <- function(H){
 gen <- function(mod) UseMethod("gen")
 
 #' @export 
+#' @importFrom fArma fbmSim
 gen.fBm <- function(mod){
   H <- mod$H
   function(n) {
@@ -95,6 +96,7 @@ gen.fBm <- function(mod){
 }
 
 #' @export
+#' @importFrom fracdiff fracdiff.sim
 gen.farima <- function(mod){
   ar = mod$ar; ma = mod$ma; d = mod$d
   function(n){
@@ -255,6 +257,3 @@ gen.default <- function(mod){
   warning(sprintf("No method for class %s found", class(mod)))
   numeric(0)
 }
-
-
-

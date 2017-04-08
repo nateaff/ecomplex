@@ -10,45 +10,44 @@
 #'  series in data. 
 #'  
 #' @export 
-extract_features <- function(data, features, id = NULL, 
+get_features <- function(data, features, id = NULL, 
                                              ncores = NULL, 
                                              verbose = FALSE){
 
   # TODO: switch for system type
-  data <- as.data.frame(data)
-  if(anyNA(data)) stop("Data contains NA values")
+  df <- as.data.frame(data)
+  if(anyNA(df)) stop("Data contains NA values")
   
   if(!is.null(ncores)){
    cores <- parallel::detectCores()
    if(verbose) cat("Using", cores, " cores ... \n")
   }
-  if(length(features) == 1) features <- list(features)
+  if(!is.list(features)) features <- as.list(c(features))
   
   f <- function(feature){
     if (!is.null(ncores)) {
-      ret <- parallel::mclapply(data, 
-                                function(x) extract_one_feature(x, feature), 
-                                mc.cores = ncores)
+      ret <- parallel::mclapply(df, function(x) get_one_feature(x, feature), 
+                                    mc.cores = ncores)
     } else {
-      ret <- lapply(data, function(x) extract_one_feature(x, feature))
+      ret <- lapply(df, function(x) get_one_feature(x, feature))
     }
   do.call(rbind, ret)
   }
 
-  ret <- do.call(cbind, (lapply(features, f))) 
+  ret <- do.call(cbind, lapply(features, f)) 
   if(!is.null(id)) ret$id <- id
   ret 
 } 
 
 
-extract_one_feature <- function(tseries, feature, ...){
-  clean_feature(feature(tseries, ...))
+get_one_feature <- function(tseries, feature){
+  clean_feature(feature(tseries))
 }
 
 #' Returns dataframe with feature(s)
 #'
-#'@param feature The feature to clean
-#'export
+#' @param feature The feature to clean
+#' @importFrom plyr unrowname
 clean_feature <- function(feature) UseMethod("clean_feature")
 
 
@@ -149,9 +148,10 @@ clean_feature.default <- function(feature){
 #'
 #' @return The permutation entropy of the time series.
 #' @export
+#' @importFrom pdc entropyHeuristic
 permutation_entropy <- function(x){
-  cat("permutation entropy \n")
-  ret <- pdc::entropyHeuristic( x )
+  # cat("permutation entropy \n")
+  ret <- pdc::entropyHeuristic(x)
   row <- which(ret$entropy.values[, 2] == ret$m)
   ret <- ret$entropy.values[row, 3]
   class(ret) <- "permutation_entropy"
@@ -164,8 +164,9 @@ permutation_entropy <- function(x){
 #'
 #' @return Sample entropy
 #' @export
+#' @importFrom pracma sample_entropy
 sample_entropy <- function(x){
-  cat("sample entropy \n" )
+  # cat("sample entropy \n" )
   ret <- pracma::sample_entropy(x)
   # structure(list(sample_entropy = res), class = "sample_entropy")
   class(ret) <- "sample_entropy"
@@ -181,9 +182,9 @@ sample_entropy <- function(x){
 #'
 #' @return The features
 #' @export
-#
+#' @importFrom pracma hurstexp
 hurst_pracma <- function(x){
-  cat("hurst \n")
+  # if(verbose) cat("hurst \n")
   ret <- pracma::hurstexp(x, d = 50, display = FALSE)
   class(ret) <- "hurst_pracma"
   ret
@@ -199,8 +200,9 @@ hurst_pracma <- function(x){
 #'
 #' @return The features
 #' @export
+#' @importFrom fArma diffvarFit
 hurst <- function(x){
-  cat("hurst \n")
+  # cat("hurst \n")
   ret <- fArma::diffvarFit(x)
   class(ret) <- "hurst"
   ret
@@ -214,7 +216,7 @@ hurst <- function(x){
 #' @return The variance
 #' @export
 variance <- function(x){
-  cat("var \n")
+  # cat("var \n")
   ret <- var(x)
   class(ret) <- "variance"
   ret
@@ -228,7 +230,7 @@ variance <- function(x){
 #' @return The features
 #' @export
 ecomp_lift <- function(x){
-  cat("ecomp lift \n")
+  # cat("ecomp lift \n")
   res <- ecomplex(x, ds = 5, method = "lift", max_degree = 5)
   class(res) <- "ecomp_lift"
   res
@@ -242,7 +244,7 @@ ecomp_lift <- function(x){
 #' @return The features
 #' @export
 ecomp_bspline <- function(x){
-  cat("ecomp bspline \n")
+  # cat("ecomp bspline \n")
   res <- ecomplex(x, ds = 5, method = "bspline", max_degree = 4)
   class(res) <- "ecomp_bspline"
   res
@@ -256,7 +258,7 @@ ecomp_bspline <- function(x){
 #' @return The features
 #' @export
 ecomp_all <- function(x){
-  cat("ecomp all \n")
+  # cat("ecomp all \n")
   res <- ecomplex(x, ds = 5, method = "all", max_degree = 5)
   class(res) <- "ecomp_all"
   res
@@ -270,7 +272,7 @@ ecomp_all <- function(x){
 #' @return The features
 #' @export
 ecomp_cspline <- function(x){
-  cat("ecomp cspline \n")
+  # cat("ecomp cspline \n")
   res <- ecomplex(x, ds = 5, method = "cspline")
   class(res) <- "ecomp_cspline"
   res
@@ -286,8 +288,9 @@ ecomp_cspline <- function(x){
 #'
 #' @return  return 
 #' @export
+#' @importFrom ForeCA spectral_entropy
 spectral_entropy <- function(x){
-  cat("spectral entropy \n")
+  # cat("spectral entropy \n")
   ret <- ForeCA::spectral_entropy(x)
   class(ret) <- "spectral_entropy"
   ret
@@ -302,7 +305,7 @@ spectral_entropy <- function(x){
 #' @return A data frame of power in each band
 #' @export 
 bandpower <- function(x){
-  cat("Bandpower \n")
+  # cat("Bandpower \n")
 
   freqs <- list(
   delta = c(0.5,4),
@@ -332,7 +335,8 @@ bandpower <- function(x){
 #'
 #' @return The results from fd.estimate
 #' @export
+#' @importFrom fractaldim fd.estimate
 fd_variogram <- function(x){
-  cat("fd_variogram \n")
+  # cat("fd_variogram \n")
   fractaldim::fd.estimate(x, methods = "variogram") 
 }
