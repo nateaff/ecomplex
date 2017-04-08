@@ -292,7 +292,6 @@ check_resid <- function(y, est, omit, j){
 }
 
 
-
 interp_err <- function(y, iwt) {
   mem()
   big_num <- 1e6
