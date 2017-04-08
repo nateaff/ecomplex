@@ -114,6 +114,7 @@ get_epsilons.all <- function(func){
 #' @param y           A vector or time series. 
 #' @param sample_num   The amount the series is downsampled.
 #' @param max_degree   The maximum degree spline polynomial to fit.
+#' @importFrom splines bs
 bspline_err <- function(y, sample_num, max_degree) {
   x <- 1:length(y)
   df <- data.frame(x = x, y = y); 

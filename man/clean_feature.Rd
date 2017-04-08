@@ -7,8 +7,7 @@
 clean_feature(feature)
 }
 \arguments{
-\item{feature}{The feature to clean
-export}
+\item{feature}{The feature to clean}
 }
 \description{
 Returns dataframe with feature(s)
