@@ -272,6 +272,6 @@ if(length(kin)>1) {
      meanK <- c(rep(1, stats$k) * mean(xin[1:stats$k]), 
                 rep(1, N - stats$k) * mean(xin[ stats$k:N] )) 
   }
-  list(kout = kout, means = meanK)
+  structure(list(kout = kout, means = meanK), class = "palarm")
 }
 
