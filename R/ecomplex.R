@@ -36,19 +36,29 @@ ecomplex <- function(x, method = c("cspline", "bspline", "lift", "all"),
                          deg   = max_degree),
                          class = method)
 
+  # The errors for each downsample level up to 'ds'
   res <- get_epsilons(func)  
   S   <- 1 / (2:(length(res$epsilons) + 1))
-  fit <- NA  
-  try({      
-     fit <- lm(log(res$epsilons) ~ log(S))   
-  }, silent = FALSE )
+  epsilons <- res$epsilons
+  method   <- res$methods
 
-  structure(list(A        = unname(coefficients(fit)[1]),
-                 B        = unname(coefficients(fit)[2]),
+  # Catch lm() errors silently and return NA values
+  A <- B <- fit <- NA
+  try({      
+     fit <- lm(log(epsilons) ~ log(S))
+     A   <- unname(coefficients(fit)[1])
+     B   <- unname(coefficients(fit)[2])
+  }, silent = TRUE )
+
+  if(is.na(fit)) warning("Coefficients could not be computed.", 
+                          " Check data for invalid values.")
+
+  structure(list(A        = A,
+                 B        = B,
                  fit      = fit, 
-                 epsilons = res$epsilons, 
+                 epsilons = epsilons, 
                  S        = S,
-                 method   = res$methods), 
+                 method   = method), 
                  class    = "ecomplex")
 }
 
@@ -135,7 +145,7 @@ bspline_err <- function(y, sample_num, max_degree) {
            # Average on full prediction 
            yhat     <- stats::predict(fit)[hold_out]
            errs[deg,] <- abs(y[hold_out] - yhat) / length(y)
-        }, silent = T )
+        }, silent = TRUE )
     }
     if (any(is.na(errs[deg, ]))) { 
       epsilons[k] <- NA 
@@ -147,6 +157,11 @@ bspline_err <- function(y, sample_num, max_degree) {
 }
 
 
+#' Function returns result for a single downsample level.
+#' 
+#' @param y           A vector or time series. 
+#' @param sample_num   The amount the series is downsampled.
+#' @param max_degree   The maximum degree spline polynomial to fit.
 # return mean errors for given sample_num
 cspline_err <- function(y, sample_num, max_degree = NULL) {
   x <- 1:length(y)
@@ -156,9 +171,11 @@ cspline_err <- function(y, sample_num, max_degree = NULL) {
   for (k in 1:sample_num) {
     ind  <- indices[[k]]
     xout <- x[-ind];
+    try({
     yout <- spline(ind, y[ind], xout = xout)
     # Average assuming sample points fit is exact
     epsilons[k]  <- sum(abs(yout$y - y[-ind])) / length(y) 
+    }, silent = TRUE)
   }
   return(mean(epsilons))
 }
