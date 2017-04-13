@@ -50,7 +50,7 @@ ecomplex <- function(x, method = c("cspline", "bspline", "lift", "all"),
      B   <- unname(coefficients(fit)[2])
   }, silent = TRUE )
 
-  if(is.na(fit)) warning("Coefficients could not be computed.", 
+  if(is.na(fit$A) || is.na(fit$B)) warning("Coefficients could not be computed.", 
                           " Check data for invalid values.")
 
   structure(list(A        = A,
