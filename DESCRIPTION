@@ -15,12 +15,6 @@ Author: Aff Nathanael <nathanaelaff@sfsu.edu.com>
 RoxygenNote: 5.0.1
 Suggests: testthat
 Imports:
-  stats,
   pracma,
-  fracdiff,
-  fractaldim,
-  pdc, 
-  plyr,
-  ForeCA,
-  fArma,
+  stats,
   memoise

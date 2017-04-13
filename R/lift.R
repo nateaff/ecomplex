@@ -1,4 +1,4 @@
-#----------------------------------------------------------
+  #----------------------------------------------------------
 # Three patterns are used for interpolation and all 
 #  other patterns are combinations of these
 #  1: o x o x o x o
@@ -39,7 +39,7 @@ pfilter1 <- function(degree, pos){
     for(j in 1:length(eval)){
       for(k in 1:N){
           y <- ymat[k, ]
-          cmat[j, k] <- pracma::neville(pos, y, eval[j])
+          cmat[j, k] <- neville(pos, y, eval[j])
       }
     }
     cmat
@@ -55,7 +55,7 @@ pfilter2 <- function(degree, pos){
   for(j in 1:length(eval)){
       for(k in 1:N){
           y <- ymat[k, ]
-          cmat[j, k] <- pracma::neville(pos, y, eval[j])
+          cmat[j, k] <- neville(pos, y, eval[j])
       }
   }
   cmat
@@ -69,7 +69,7 @@ pfilter3 <- function(degree, pos){
   for(j in 1:length(eval)){
       for(k in 1:N){
           y <- ymat[k,]
-          cmat[j, k] <- pracma::neville(pos, y, eval[j])
+          cmat[j, k] <- neville(pos, y, eval[j])
       }
   }
   cmat
