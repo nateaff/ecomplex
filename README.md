@@ -45,7 +45,6 @@ axis.
 
 ```r
 plot(c(group1[,1]), xlim = c(0,1000), ylab = "", 
-                                      main = title, 
                                       col = "gray20", 
                                       lwd = 1.5, type ='l')
 lines(501:1000, group2[,1], col = "chocolate3", lwd = 1.5)
