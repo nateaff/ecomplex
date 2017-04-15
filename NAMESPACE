@@ -2,6 +2,8 @@
 
 export(downsample_perm)
 export(ecomplex)
+export(neville)
 export(normalize)
 export(palarm)
 importFrom(splines,bs)
+importFrom(stats,spline)

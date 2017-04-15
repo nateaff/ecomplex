@@ -36,7 +36,7 @@ ecomplex <- function(x, method = c("cspline", "bspline", "lift", "all"),
                          deg   = max_degree),
                          class = method)
 
-  # The errors for each downsample level up to 'ds'
+  # Compute error for each downsample level up to 'ds'
   res <- get_epsilons(func)  
   S   <- 1 / (2:(length(res$epsilons) + 1))
   epsilons <- res$epsilons
@@ -103,9 +103,12 @@ get_epsilons.lift <- function(func) {
   list(epsilons = epsilons, methods = class(func))
 }
 
+# Find best fit among all methods. If the series length
+# is longer than 500, this defaults to using just the 
+# cubic spline and lift methods.
 get_epsilons.all <- function(func){
   methods <- c("cspline", "bspline", "lift")
-  if (length(func$x) > 800 ) {
+  if (length(func$x) > 500 ) {
     methods <- c("cspline", "lift")
   }
   eps <- lapply(methods, 
@@ -128,7 +131,7 @@ get_epsilons.all <- function(func){
 bspline_err <- function(y, sample_num, max_degree) {
   x <- 1:length(y)
   df <- data.frame(x = x, y = y); 
-  indices  <- downsample_perm(length(y), sample_num);#
+  indices  <- downsample_perm(length(y), sample_num)
   # minimum error for each permutation
   epsilons <- double(length(indices))
   for (k in 1:sample_num) {
@@ -162,7 +165,8 @@ bspline_err <- function(y, sample_num, max_degree) {
 #' @param y           A vector or time series. 
 #' @param sample_num   The amount the series is downsampled.
 #' @param max_degree   The maximum degree spline polynomial to fit.
-# return mean errors for given sample_num
+#' @return The mean errors for given sample_num
+#' @importFrom stats spline
 cspline_err <- function(y, sample_num, max_degree = NULL) {
   x <- 1:length(y)
   indices  <- downsample_perm(length(y), sample_num);
