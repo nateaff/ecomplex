@@ -36,7 +36,7 @@ palette(c("gray20", "chocolate3"))
 with(df, plot(B, A, col = id, lwd = 2))
 ```
 
-![plot of chunk arimasim](tools/README-arimasim-1.png)
+![plot of chunk arimasim](figures/README-arimasim-1.png)
 
 An example from each time series group plotted on the same 
 axis. 
@@ -50,7 +50,7 @@ lines(501:1000, group2[, 1], col = "chocolate3", lwd = 1.2)
 abline(v = c(500), lwd = 3, col = "gray20")
 ```
 
-![plot of chunk ts](tools/README-ts-1.png)
+![plot of chunk ts](figures/README-ts-1.png)
 
 ```r
 palette("default")
