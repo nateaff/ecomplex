@@ -23,6 +23,7 @@
 #' \code{means} \tab Vector of mean values on each stationary segment. \cr
 #' }
 #'@export
+#'@importFrom stats sd
 palarm <- function(x, delta1 =1, 
                       delta2 = 0, 
                       pf = 0.1, 

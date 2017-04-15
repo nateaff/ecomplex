@@ -19,6 +19,7 @@
 #'                      "all" is used. 
 #'}
 #'@export
+#'@importFrom stats lm coefficients
 ecomplex <- function(x, method = c("cspline", "bspline", "lift", "all"), 
                         ds = 6, 
                         max_degree = 5) {
