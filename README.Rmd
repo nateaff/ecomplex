@@ -43,7 +43,7 @@ palette(c("gray20", "chocolate3"))
 with(df, plot(B, A, col = id, lwd = 2.5))
 ``` 
 
-And a plot of a sample from each ARMA(2,2) group on the same 
+A plot of a sample from each ARMA(2,2) group on the same 
 axis. 
 
 ```{r ts}
