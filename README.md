@@ -38,14 +38,13 @@ palette(c("gray20", "chocolate3"))
 with(df, plot(B, A, col = id, lwd = 2.5))
 ```
 
-![plot of chunk arimasim](README-arimasim-1.png)
+![plot of chunk arimasim](tools/README-arimasim-1.png)
 
 And a plot of a sample from each ARMA(2,2) group on the same 
 axis. 
 
 
 ```r
-# plot sample of each group
 plot(c(group1[,1]), xlim = c(0,1000), ylab = "", 
                                       main = title, 
                                       col = "gray20", 
@@ -54,7 +53,7 @@ lines(501:1000, group2[,1], col = "chocolate3", lwd = 1.5)
 abline(v = c(500), lwd = 4, col = "gray20")
 ```
 
-![plot of chunk ts](README-ts-1.png)
+![plot of chunk ts](tools/README-ts-1.png)
 
 ```r
 palette("default")
