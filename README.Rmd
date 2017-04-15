@@ -14,12 +14,11 @@ knitr::opts_chunk$set(
 
 # ecomplex
 
-R package for efficiently computing the epsilon-complexity coefficients of a time series. The coefficients are a 
-measure of the complexity of a time series.
+R package for efficiently computing the epsilon-complexity coefficients of a time series. The coefficients indicate the complexity of a time series by calculating the change in the approximation error as the series is approximated using fewer and fewer samples.
 
 # An example 
 
-The complexity coefficients have been used as a feature in classification and clustering tasks. Here we look at how well the coefficients discriminate between two sets of time serires drawn from ARMA(2,2) models with one AR parameter changed.
+The complexity coefficients have been used as a feature in classification and clustering tasks. Here we look at how well the coefficients discriminate between two sets of time series drawn from ARMA(2,2) models with one AR parameter changed.
 
 ```{r arimasim}
 library(ecomplex)
@@ -59,7 +58,7 @@ palette("default")
 
 # The basic algorithm
 
-The `ecomplex` function successively down samples and approximates a time series. The coefficients are the parameters of a log-log regression of the set of approximation errors on the fraction of sample points retained for each approximation. Roughly, the coefficients measure the amount of information (the fraction of samples) needed to approximate a function within some error epsilon.
+The `ecomplex` function successively down samples and approximates a time series. The coefficients are the parameters of a log-log regression of the set of approximation errors on the fraction of sample points retained for each approximation. Roughly, the coefficients measure the amount of information (in terms of sample points) needed to approximate a function within some error epsilon.
 
 See Darkhovsky and Piryatinska, [Binary classification of multi-channel EEG records based on the epsilon-complexity of continuous vector functions](https://arxiv.org/pdf/1610.01633.pdf).
 
