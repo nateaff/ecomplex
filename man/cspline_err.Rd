@@ -13,6 +13,9 @@ cspline_err(y, sample_num, max_degree = NULL)
 
 \item{max_degree}{The maximum degree spline polynomial to fit.}
 }
+\value{
+The mean errors for given sample_num
+}
 \description{
 Function returns result for a single downsample level.
 }

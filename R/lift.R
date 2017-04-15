@@ -1,36 +1,43 @@
-  #----------------------------------------------------------
+#----------------------------------------------------------
 # Three patterns are used for interpolation and all 
 #  other patterns are combinations of these
 #  1: o x o x o x o
 #  2: o x x o x x o xx o
 #  3: o x o o x o x o o x
 #  
-#  This number matches the numbering of the filters
-#  and the merges. 
+#  This number matches the numbering of the filter
+#  and merge types. 
 #  
 #  The numbering on the inverse transforms (upsampling)
 #  matches the initial downsampling patterns, which 
 #  are formed by removing every other 1, 2, 3, 3, 5
-#  points, respectively.
+#  points, respectively. That is, for filter1 and 
+#  merge1 interpolate a single midpoint, and merge
+#  the interpolated points with the seqeunce. This 
+#  repreoduces a type of wavelet interpolation.
 #
 # The general algorithm is : 
 # 1. Filters-k hold the sampling pattern and are passed to
 # 2. pfilters-k which create the matrix of time-domain 
 #    filters used for interpolation.
-# 3. The inverse functions interpolate points which are 
-# 4. merged for depending on the downsampling pattern
+# 3. The inverse functions interpolate points by 
+#    applying the filter to the known points.  
+# 4. The interpolated points are merged based 
+#    on the downsampling pattern.
 #----------------------------------------------------------
 
 
 #----------------------------------------------------------
-# Pfilter functions build matrices of 
-# time domain filters for various each downsampling pattern 
-# and each position. 
+# Pfilter functions build matrices of time domain 
+# filters for each downsampling pattern and each position
+# being interpolated.  
 #
-# Note: Border filters aren't being used and these 
-# functions can be simplified since only the centered 
-# position (not the borders) are being interpolated.
+# Note: Filters for computing points at the sequence 
+# boundaries aren't being used. These 
+# functions could be simplified since only the centered 
+# position (not the boundary) are being interpolated.
 #----------------------------------------------------------
+
 pfilter1 <- function(degree, pos){
     N <- degree + 1
     eval <- seq(min(pos) - 1, max(pos) + 1, by = 2)
@@ -45,7 +52,6 @@ pfilter1 <- function(degree, pos){
     cmat
 }
 
-# could update to just evaluate the 0 position
 pfilter2 <- function(degree, pos){
   x <- (min(pos) - 2):(max(pos) + 2)
   eval <- x[!(x %in% pos)]
@@ -61,16 +67,14 @@ pfilter2 <- function(degree, pos){
   cmat
 }
 
+# Evaluate only at center position 0
 pfilter3 <- function(degree, pos){
-  eval <- 0
   N <- degree + 1
-  cmat <- matrix(0, nrow = length(eval), ncol = length(pos))
+  cmat <- double(length(pos))
   ymat <- diag(N)
-  for(j in 1:length(eval)){
-      for(k in 1:N){
-          y <- ymat[k,]
-          cmat[j, k] <- neville(pos, y, eval[j])
-      }
+  for(k in 1:N){
+      y <- ymat[k,]
+      cmat[k] <- neville(pos, y, 0)
   }
   cmat
 }
@@ -86,10 +90,8 @@ filters1 <- function(){
                   quad    = c(-1, 1, 3),
                   cubic   = c(-3, -1, 1, 3),
                   quart   = c(-3, -1, 1, 3, 5), 
-                  quintic = c(-5, -3, -1, 1, 3, 5), 
-                  sextic  = c(1, 1, 1, 1, 1, 1, 1), # dummy
-                  septic  = c(-7, -5, -3, -1, 1, 3, 5, 7))
-  degrees <- 1:7
+                  quintic = c(-5, -3, -1, 1, 3, 5))
+  degrees <- 1:5
   ret <- lapply(degrees, function(x) pfilter1(x, pts[[x]] ))
   ret
 }
@@ -111,12 +113,12 @@ filters2 <- function(){
 # filter for downsample pattern: o x oo x o x  
 filters3 <- function(){
   # Shifting the points gives the same filter
-  pts <- list( linear1   = c(-1,1),
+  pts <- list( linear1   = c(-1, 1),
                 cubic1   = c(-2, -1, 1, 3),
                 cubic2   = c(-3, -1, 1, 2),
-                quintic1 = c(-4,-2, -1, 1, 3, 4),
-                quintic2 = c(-4,-3, -1, 1, 2, 4))
-  degrees <- c(1,3,3,5,5)
+                quintic1 = c(-4, -2, -1, 1, 3, 4),
+                quintic2 = c(-4, -3, -1, 1, 2, 4))
+  degrees <- c(1, 3, 3, 5, 5)
   ret <- lapply(1:length(degrees), function(k) pfilter3(degrees[k], pts[[k]] ))
   ret
 }
@@ -215,16 +217,15 @@ inverseWT4 <- function(x, degree = 3){
 }
  
 #----------------------------------------------------------
-# The merge functions merge interpolated points with 
-# the previous points.
+# The merge interpolated points
 #----------------------------------------------------------
 
 merge1 <- function(odd, even){
     len <- length(even) + length(odd)
     x <- double(len)
     for(k in 1:length(even)){
-        x[2*k -1] <- odd[k]
-        x[2*k] <- even[k]
+        x[2 * k - 1] <- odd[k]
+        x[2 * k] <- even[k]
     }
     x[1:len]
 }
@@ -235,10 +236,9 @@ merge2 <- function(odd, even){
     len <- length(odd) + length(even)
 
     for(k in seq_along(odd)){
-        # cat("insert", xseq[k], "\n")
         x[xseq[k]] <- odd[k]
-        x[xseq[k]+1] <- even[2*k-1]
-        x[xseq[k]+2] <- even[2*k]
+        x[xseq[k] + 1] <- even[2 * k-1]
+        x[xseq[k] + 2] <- even[2 * k]
     }
     x[1:len]
 }
@@ -247,11 +247,10 @@ merge3 <- function(odd, even, offset){
 
   n <- length(odd) + length(even)
   x <- double(n)
-  oseq <- floor((5*(1:n)-1)/3)
+  oseq <- floor((5 * (1:n)-1)/3)
   eseq <- (1:n)[-oseq]
-  for(k in seq_along(odd)) x[oseq[k]] = odd[k]
+  for(k in seq_along(odd))  x[oseq[k]] = odd[k]
   for(k in seq_along(even)) x[eseq[k]] = even[k] 
-  
   x[1:n]
 }
 
@@ -259,26 +258,25 @@ merge3 <- function(odd, even, offset){
 
 
 # Returns a list holding parameters for the appropriate
-# interpolation procedure based on the downsaple level "ds"
+# interpolation procedure based on the downsaple level "ds".
+# Note ds = 2 
 iwt_mod <- function(ds){
- if(is.integer(ds)) type <- as.character(ds) 
+ if(ds == 1) stop("Downsample value must be 2 or greater.")
+ type <- as.character(ds) 
  switch(type,
-          "1" = { mod <- structure(list(ds = ds, degs = c(1,3,5), 
-                                       omit = 0, inverse = inverseWT1), 
-                                       class = "iwt0")},
-          "2" = { mod <- structure(list(ds = ds, degs = c(1,3,5), 
+          "2" = { mod <- structure(list(ds = ds, degs = c(1, 3, 5), 
                                        omit = 5, inverse = inverseWT1), 
                                        class = "iwt1")},
-         "3" = { mod <- structure(list(ds = ds, degs = c(1,3,5), 
+         "3" = { mod <- structure(list(ds = ds, degs = c(1,3, 5), 
                                        omit = 8, inverse = inverseWT2), 
                                        class = "iwt2")},
-         "4" = { mod <- structure(list(ds = ds, degs = c(1,3,5), 
+         "4" = { mod <- structure(list(ds = ds, degs = c(1, 3, 5), 
                                        omit = 10, inverse = inverseWT3), 
                                        class = "iwt3")},
          "5" = { mod <- structure(list(ds = ds, degs = 3, 
                                        omit = 15, inverse = inverseWT4), 
                                        class = "iwt4")},
-         "6" = { mod <- structure(list(ds = ds, degs = c(1,3,5),
+         "6" = { mod <- structure(list(ds = ds, degs = c(1, 3, 5),
                                        omit = 20, inverse = inverseWT5),
                                        class = "iwt5")}
          )
@@ -291,7 +289,7 @@ check_resid <- function(y, est, omit, j){
     sum(abs(est[erange] - y[yrange])/length(erange))
 }
 
-
+# compute interpolation error based
 interp_err <- function(y, iwt) {
   mem()
   big_num <- 1e6

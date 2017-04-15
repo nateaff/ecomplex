@@ -21,11 +21,23 @@ test_that("ecomplex does not return NA's", {
 })
 
 
-test_that("ecomplex throws appropriate warnings for malformed data", {
+test_that("ecomplex throws appropriate errors or warnings for malformed data", {
   err1 <- c(1, 2, "c")
   err2 <- matrix(rep(1, 20))
   err3 <- data.frame(rep(1, 20))
+  err4 <- c(1,2, NA)
+  # errors  
   expect_error(ecomplex(err1))
-  expect_error(ecomplex(matrix(c("a", "b"))))
   expect_error(ecomplex(err2))
+  expect_error(ecomplex(err3))
+  expect_error(ecomplex(err4))
+  # warnings
+  err5 <- c(1:101, Inf)
+  # Length warning
+  err6 <- c(1:20)
+  expect_warning(ecomplex(err5))
+  expect_warning(ecomplex(err6))
+  # silent
+  err7 <- c(1:101, NULL)
+  expect_silent(ecomplex(err7))
 })

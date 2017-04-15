@@ -20,7 +20,7 @@ R package for efficiently computing the epsilon-complexity coefficients of a tim
 
 # An example 
 
-The complexity coefficients can be used a feature in classification and clustering tasks. Here we generate two groups of time series, each group drawn from an ARMA(2,2) model with one parameter changed. Plotting shows the coefficients separate the two series fairly well. 
+The complexity coefficients can be used a feature in classification and clustering tasks. Here we generate two groups of time series, each group drawn from an ARMA(2,2) model with one parameter changed. A plot of the coefficients for each series shows the two groups are fairly well separated in the coefficient space.
 ```{r arimasim}
 library(ecomplex)
 set.seed(1)
