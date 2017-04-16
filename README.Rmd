@@ -74,3 +74,5 @@ The package is in development but the `ecomplex` interface should be fairly stab
 
 The `palarm` function included in the package is a change point detection algorithm. There will likely be minor changes to return 
 type of the function in the near future.
+
+[![Build Status](https://travis-ci.org/nwaff/ecomplex.svg?branch=master)](https://travis-ci.org/nwaff/ecomplex)
