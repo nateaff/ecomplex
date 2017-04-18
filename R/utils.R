@@ -26,7 +26,7 @@ normalize <- function(x){
 #'
 #' @return  List of indices 
 #' @export
-downsample_perm <- function(n,ds){
+downsample_perm <- function(n, ds){
   x   <- 1:n
   ind  <- vector("list", ds)    
   for (k in 1:ds){
@@ -34,3 +34,23 @@ downsample_perm <- function(n,ds){
   }
   ind
 }
+
+ 
+#----------------------------------------------------------
+# Added for testing affect of error types. 
+# In summary, mae and mse performed similarly.
+#----------------------------------------------------------
+
+# mean computed in error function
+mae <- function(x, y){
+  sum(abs(x - y))
+}
+
+mse <- function(x, y){
+  sum((x - y)^2)
+}
+
+maxerr <- function(x, y){
+  max(abs(x - y))
+}
+
