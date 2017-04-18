@@ -12,7 +12,7 @@ R package for efficiently computing the epsilon-complexity coefficients of a tim
 
 # An example 
 
-The complexity coefficients can be used a feature in classification and clustering tasks. Here we generate two groups of time series, each group drawn from an ARMA(2,2) model with one parameter changed. Plotting shows the coefficients separate the two series fairly well. 
+The complexity coefficients can be used a feature in classification and clustering tasks. Here we generate two groups of time series, each group drawn from an ARMA(2,2) model with one parameter changed. A plot of the coefficients for each series shows the two groups are fairly well separated in the coefficient space. 
 
 ```r
 library(ecomplex)
@@ -75,3 +75,5 @@ The package is in development but the `ecomplex` interface should be fairly stab
 
 The `palarm` function included in the package is a change point detection algorithm. There will likely be minor changes to return 
 type of the function in the near future.
+
+[![Build Status](https://travis-ci.org/nwaff/ecomplex.svg?branch=master)](https://travis-ci.org/nwaff/ecomplex)
