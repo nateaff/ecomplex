@@ -4,7 +4,7 @@
 \alias{cspline_err}
 \title{Function returns result for a single downsample level.}
 \usage{
-cspline_err(y, sample_num, max_degree = NULL)
+cspline_err(y, sample_num, max_degree, err_norm)
 }
 \arguments{
 \item{y}{A vector or time series.}
@@ -12,6 +12,8 @@ cspline_err(y, sample_num, max_degree = NULL)
 \item{sample_num}{The amount the series is downsampled.}
 
 \item{max_degree}{The maximum degree spline polynomial to fit.}
+
+\item{err_norm}{The norm used in computing the approximation error.}
 }
 \value{
 The mean errors for given sample_num

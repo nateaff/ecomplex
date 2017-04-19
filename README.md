@@ -5,14 +5,9 @@ output: github_document
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 
-
-# ecomplex
-
-R package for efficiently computing the epsilon-complexity coefficients of a time series. The coefficients indicate the complexity of a time series by calculating the change in the approximation error as the series is approximated using fewer and fewer samples.
-
-# An example 
-
-The complexity coefficients can be used a feature in classification and clustering tasks. Here we generate two groups of time series, each group drawn from an ARMA(2,2) model with one parameter changed. Plotting shows the coefficients separate the two series fairly well. 
+```
+## Error: attempt to use zero-length variable name
+```
 
 ```r
 library(ecomplex)
@@ -36,7 +31,7 @@ palette(c("gray20", "chocolate3"))
 with(df, plot(B, A, col = id, lwd = 2))
 ```
 
-![plot of chunk arimasim](figures/README-arimasim-1.png)
+![plot of chunk arimasim](figure/arimasim-1.png)
 
 An example from each time series group plotted on the same 
 axis. 
@@ -50,7 +45,7 @@ lines(501:1000, group2[, 1], col = "chocolate3", lwd = 1.2)
 abline(v = c(500), lwd = 3, col = "gray20")
 ```
 
-![plot of chunk ts](figures/README-ts-1.png)
+![plot of chunk ts](figure/ts-1.png)
 
 ```r
 palette("default")
@@ -75,3 +70,5 @@ The package is in development but the `ecomplex` interface should be fairly stab
 
 The `palarm` function included in the package is a change point detection algorithm. There will likely be minor changes to return 
 type of the function in the near future.
+
+[![Build Status](https://travis-ci.org/nwaff/ecomplex.svg?branch=master)](https://travis-ci.org/nwaff/ecomplex)

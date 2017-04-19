@@ -5,7 +5,7 @@
 \title{Compute the epsilon-complexity of a time series.}
 \usage{
 ecomplex(x, method = c("cspline", "bspline", "lift", "all"), ds = 6,
-  max_degree = 5)
+  max_degree = 5, err_norm = c("mae", "mse", "max"))
 }
 \arguments{
 \item{x}{A vector of points.}

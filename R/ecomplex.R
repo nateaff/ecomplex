@@ -22,19 +22,22 @@
 #'@importFrom stats lm coefficients
 ecomplex <- function(x, method = c("cspline", "bspline", "lift", "all"), 
                         ds = 6, 
-                        max_degree = 5) {
+                        max_degree = 5,
+                        err_norm = c("mae", "mse", "max")) {
 
   if (!is.null(dim(x))) stop("Data must be a vector of numeric values")
   x <- as.numeric(x)
   if (anyNA(x))         stop("Data contains NA values")
   if (length(x) < 100)  warning("Complexity estimate may not be stable ", 
                                 "for short series")  
-  x      <- normalize(x)
-  method <- match.arg(method)
- 
+  x <- normalize(x)
+  method   <- match.arg(method)
+  err_norm <- match.arg(err_norm) 
+
   func <- structure(list(x     = x, 
                          ds    = ds, 
-                         deg   = max_degree),
+                         deg   = max_degree, 
+                         err_norm  = err_norm),
                          class = method)
 
   # Compute error for each downsample level up to 'ds'
@@ -47,8 +50,8 @@ ecomplex <- function(x, method = c("cspline", "bspline", "lift", "all"),
   A <- B <- fit <- NA
   try({      
      fit <- lm(log(epsilons) ~ log(S))
-     A   <- unname(coefficients(fit)[1])
-     B   <- unname(coefficients(fit)[2])
+     A   <- unname(stats::coef(fit)[1])
+     B   <- unname(stats::coef(fit)[2])
   }, silent = TRUE )
 
   if(is.na(A) || is.na(B)) warning("Coefficients could not be computed.", 
@@ -59,7 +62,8 @@ ecomplex <- function(x, method = c("cspline", "bspline", "lift", "all"),
                  fit      = fit, 
                  epsilons = epsilons, 
                  S        = S,
-                 method   = method), 
+                 method   = method, 
+                 err_norm = err_norm), 
                  class    = "ecomplex")
 }
 
@@ -94,7 +98,8 @@ get_epsilons.cspline <- function(func){
   epsilons <- double(func$ds - 1)
   ds <- 2:func$ds
     for (k in ds) {
-    epsilons[k - 1] <- cspline_err(func$x, sample_num = k, max_degree = func$deg)
+    epsilons[k - 1] <- cspline_err(func$x, sample_num = k, max_degree = func$deg, 
+                                           err_norm = func$err_norm)
   }
   list(epsilons = epsilons, methods = class(func))
 }
