@@ -5,6 +5,7 @@ output: github_document
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 
+<<<<<<< HEAD
 
 # ecomplex
 
@@ -13,6 +14,11 @@ R package for efficiently computing the epsilon-complexity coefficients of a tim
 # An example 
 
 The complexity coefficients can be used a feature in classification and clustering tasks. Here we generate two groups of time series, each group drawn from an ARMA(2,2) model with one parameter changed. A plot of the coefficients for each series shows the two groups are fairly well separated in the coefficient space. 
+=======
+```
+## Error: attempt to use zero-length variable name
+```
+>>>>>>> 26814868260f7053a0467c4f69e50e5256c73d80
 
 ```r
 library(ecomplex)
@@ -36,7 +42,7 @@ palette(c("gray20", "chocolate3"))
 with(df, plot(B, A, col = id, lwd = 2))
 ```
 
-![plot of chunk arimasim](figures/README-arimasim-1.png)
+![plot of chunk arimasim](figure/arimasim-1.png)
 
 An example from each time series group plotted on the same 
 axis. 
@@ -50,7 +56,7 @@ lines(501:1000, group2[, 1], col = "chocolate3", lwd = 1.2)
 abline(v = c(500), lwd = 3, col = "gray20")
 ```
 
-![plot of chunk ts](figures/README-ts-1.png)
+![plot of chunk ts](figure/ts-1.png)
 
 ```r
 palette("default")
