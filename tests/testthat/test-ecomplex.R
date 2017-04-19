@@ -13,21 +13,26 @@ test_that("ecomplex does not return NA's", {
   fit1 <- ecomplex(x, ds = 6, max_degree = 5, method = "bspline")
   fit2 <- ecomplex(x, ds = 6, max_degree = 5, method = "cspline")
   fit3 <- ecomplex(x, ds = 6, max_degree = 5, method = "lift")
+  fit4 <- ecomplex(x, ds = 6, max_degree = 5, method = "cspline", 
+                              sample_type = "random")
+  fit5 <- ecomplex(x, ds = 6, max_degree = 5, method = "cspline", 
+                              sample_type = "step")
   
   expect_that(all(!is.na(fit1$fit)), is_true())
   expect_that(all(!is.na(fit2$fit)), is_true())
   expect_that(all(!is.na(fit3$fit)), is_true())
-
+  expect_that(all(!is.na(fit4$fit)), is_true())
+  expect_that(all(!is.na(fit5$fit)), is_true())
 })
 
 
 test_that("ecomplex throws appropriate errors or warnings for malformed data", {
-  err1 <- c(1, 2, "c")
+  # err1 <- c(1, 2, "c")
   err2 <- matrix(rep(1, 20))
   err3 <- data.frame(rep(1, 20))
   err4 <- c(1,2, NA)
   # errors  
-  expect_error(ecomplex(err1))
+  # expect_error(ecomplex(err1))
   expect_error(ecomplex(err2))
   expect_error(ecomplex(err3))
   expect_error(ecomplex(err4))
@@ -37,7 +42,4 @@ test_that("ecomplex throws appropriate errors or warnings for malformed data", {
   err6 <- c(1:20)
   expect_warning(ecomplex(err5))
   expect_warning(ecomplex(err6))
-  # silent
-  err7 <- c(1:101, NULL)
-  expect_silent(ecomplex(err7))
 })

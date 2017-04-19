@@ -7,6 +7,9 @@
 #'                c("bspline", "cspline")
 #' @param max_degree The maximum order spline used in the approximation
 #'              step
+#' @param err_norm The norm type used in computing the approximation error.
+#' @param sample_type The downsampling type. Either randomly sampled  
+#'                      or downsampled in integer steps.
 #'
 #' @return A \code{list} with :
 #' \tabular{ll}{
@@ -20,24 +23,27 @@
 #'}
 #'@export
 #'@importFrom stats lm coefficients
-ecomplex <- function(x, method = c("cspline", "bspline", "lift", "all"), 
-                        ds = 6, 
+ecomplex <- function(x, ds = 6, 
                         max_degree = 5,
-                        err_norm = c("mae", "mse", "max")) {
+                        method = c("cspline", "bspline", "lift", "all"), 
+                        err_norm = c("mae", "mse", "max"), 
+                        sample_type = c("step", "random")) {
 
   if (!is.null(dim(x))) stop("Data must be a vector of numeric values")
-  x <- as.numeric(x)
+  x <- as.numeric(x)  
   if (anyNA(x))         stop("Data contains NA values")
   if (length(x) < 100)  warning("Complexity estimate may not be stable ", 
                                 "for short series")  
   x <- normalize(x)
   method   <- match.arg(method)
   err_norm <- match.arg(err_norm) 
+  sample_type <- match.arg(sample_type)
 
   func <- structure(list(x     = x, 
                          ds    = ds, 
                          deg   = max_degree, 
-                         err_norm  = err_norm),
+                         err_norm  = err_norm, 
+                         sample_type = sample_type),
                          class = method)
 
   # Compute error for each downsample level up to 'ds'
@@ -63,7 +69,8 @@ ecomplex <- function(x, method = c("cspline", "bspline", "lift", "all"),
                  epsilons = epsilons, 
                  S        = S,
                  method   = method, 
-                 err_norm = err_norm), 
+                 err_norm = err_norm, 
+                 sample_type = sample_type), 
                  class    = "ecomplex")
 }
 
@@ -98,8 +105,10 @@ get_epsilons.cspline <- function(func){
   epsilons <- double(func$ds - 1)
   ds <- 2:func$ds
     for (k in ds) {
-    epsilons[k - 1] <- cspline_err(func$x, sample_num = k, max_degree = func$deg, 
-                                           err_norm = func$err_norm)
+    epsilons[k - 1] <- cspline_err(func$x, sample_num = k, 
+                                           max_degree = func$deg, 
+                                           err_norm = func$err_norm, 
+                                           sample_type = func$sample_type)
   }
   list(epsilons = epsilons, methods = class(func))
 }
