@@ -4,19 +4,25 @@
 \alias{ecomplex}
 \title{Compute the epsilon-complexity of a time series.}
 \usage{
-ecomplex(x, method = c("cspline", "bspline", "lift", "all"), ds = 6,
-  max_degree = 5, err_norm = c("mae", "mse", "max"))
+ecomplex(x, ds = 6, max_degree = 5, method = c("cspline", "bspline",
+  "lift", "all"), err_norm = c("mae", "mse", "max"), sample_type = c("step",
+  "random"))
 }
 \arguments{
 \item{x}{A vector of points.}
-
-\item{method}{The interpolation or approximation method. One of
-c("bspline", "cspline")}
 
 \item{ds}{Number of times to downsample the input sequence.}
 
 \item{max_degree}{The maximum order spline used in the approximation
 step}
+
+\item{method}{The interpolation or approximation method. One of
+c("bspline", "cspline")}
+
+\item{err_norm}{The norm type used in computing the approximation error.}
+
+\item{sample_type}{The downsampling type. Either randomly sampled
+or downsampled in integer steps.}
 }
 \value{
 A \code{list} with :

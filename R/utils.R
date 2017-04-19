@@ -35,7 +35,27 @@ downsample_perm <- function(n, ds){
   ind
 }
 
- 
+#' Create indices to randomly downsample a sequence.
+#' 
+#' Creates a list of indices that sample a fractional
+#'  of the total values. The fraction sampled is
+#'  1/2:ds, the same fraction sampled in downsample_perm.
+#'
+#' @param  n Length of list.
+#' @param  ds Downsample rate.
+#'
+#' @return  List of indices 
+#' @export
+random_sample <- function(n, ds){
+  x <- 1:n
+  sample_num <- floor(1/ds * n)
+  ind <- vector("list", ds)
+  for (k in 1:ds){
+    ind[[k]] <- sort(sample(x, sample_num, replace = FALSE))
+  }
+  ind
+}
+
 #----------------------------------------------------------
 # Added for testing affect of error types. 
 # In summary, mae and mse performed similarly.
