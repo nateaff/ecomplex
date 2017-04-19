@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 # ecomplex
 
-R package for efficiently computing the epsilon-complexity coefficients of a time series. The coefficients indicate the complexity of a time series by calculating the change in the approximation error as the series is approximated using fewer and fewer samples.
+R package for efficiently computing the epsilon-complexity coefficients of a time series. The coefficients are estimates of the complexity of a time series. They are computed by finding a trend in the best approximation error as the series is successively downsampled and approximated.
 
 # An example 
 
