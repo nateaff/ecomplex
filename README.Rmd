@@ -13,11 +13,13 @@ knitr::opts_chunk$set(
   fig.height = 7
 )
 
-j ```
+```
+
+[![Build Status](https://travis-ci.org/nwaff/ecomplex.svg?branch=master)](https://travis-ci.org/nwaff/ecomplex)
 
 # ecomplex
 
-R package for efficiently computing the epsilon-complexity coefficients of a time series. The coefficients estimate the complexity of a time series by calculating the change in the approximation error as the series is approximated using fewer and fewer samples.
+R package for efficiently computing the epsilon-complexity coefficients of a time series. The coefficients are estimates of the complexity of a time series. The complexity coefficients are computed by finding a trend in the best approximation error as the series is successively downsampled and approximated.
 
 # An example 
 
@@ -75,5 +77,3 @@ The package is in development but the `ecomplex` interface should be fairly stab
 
 The `palarm` function included in the package is a change point detection algorithm. There will likely be minor changes to return 
 type of the function in the near future.
-
-[![Build Status](https://travis-ci.org/nwaff/ecomplex.svg?branch=master)](https://travis-ci.org/nwaff/ecomplex)
