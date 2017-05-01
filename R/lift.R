@@ -1,22 +1,16 @@
 #----------------------------------------------------------
-# Three patterns are used for interpolation and all 
-#  other patterns are combinations of these
+# Three patterns are used for interpolation and 
+#  other patterns are combinations of these.
 #  1: o x o x o x o
 #  2: o x x o x x o xx o
 #  3: o x o o x o x o o x
 #  
-#  This number matches the numbering of the filter
-#  and merge types. 
-#  
-#  The numbering on the inverse transforms (upsampling)
-#  matches the initial downsampling patterns, which 
-#  are formed by removing every other 1, 2, 3, 3, 5
-#  points, respectively. That is, for filter1 and 
+#  This numbering mathces that of the the filter
+#  and merge types. That is, for filter1 and 
 #  merge1 interpolate a single midpoint, and merge
-#  the interpolated points with the seqeunce. This 
-#  repreoduces a type of wavelet interpolation.
-#
-# The general algorithm is : 
+#  the interpolated points with the seqeunce. 
+#  
+# The general algorithm : 
 # 1. Filters-k hold the sampling pattern and are passed to
 # 2. pfilters-k which create the matrix of time-domain 
 #    filters used for interpolation.
@@ -33,9 +27,7 @@
 # being interpolated.  
 #
 # Note: Filters for computing points at the sequence 
-# boundaries aren't being used. These 
-# functions could be simplified since only the centered 
-# position (not the boundary) are being interpolated.
+# boundaries aren't being used. 
 #----------------------------------------------------------
 
 pfilter1 <- function(degree, pos){
@@ -136,8 +128,8 @@ get_offset <- function(n){
 
  
 #----------------------------------------------------------
-# The 'inverse' are the interpoloating functions for 
-# each downsample pattern. 
+# The 'inverse' functions are the interpoloating functions 
+# for each downsample pattern. 
 #----------------------------------------------------------
 inverseWT1 <- function(x, degree){
 
@@ -153,8 +145,8 @@ inverseWT1 <- function(x, degree){
     for(k in offset:(length(ps)- offset)){
         ps[k] <- predict(x[(k - offset + 1):(k+offset)], filter[offset+1, ])
     }
-    res <- merge1(x[1:length(x)], ps[1:length(x)])[1:(length(x)*2)]
-    res
+    ret<- merge1(x[1:length(x)], ps[1:length(x)])[1:(length(x)*2)]
+    ret
 }
 
 
@@ -298,8 +290,8 @@ interp_err <- function(y, iwt) {
   for(j in 1:iwt$ds){
     for(k in seq_along(iwt$degs)){
       xs <- y[ks[[j]]]
-      res <- iwt$inverse(xs, iwt$degs[k])      
-      errs[j, k] <- check_resid(y, res, iwt$omit, j - 1)
+      ret<- iwt$inverse(xs, iwt$degs[k])      
+      errs[j, k] <- check_resid(y, ret, iwt$omit, j - 1)
     }
   }
   mean(unlist(apply(errs, 1, min)))
