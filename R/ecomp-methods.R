@@ -6,6 +6,7 @@
 #' @param fit An object of type 'ecomplex'.
 #'
 #' @return  A dataframe with the two coefficients.
+#' @method coef ecomplex
 coef.ecomplex <- function(fit){
   data.frame(A = fit$A, B = fit$B) 
 }
@@ -17,11 +18,11 @@ coef.ecomplex <- function(fit){
 #'  and S is the fraction of points retained at a given
 #'  downsample level.
 #'
-#' @param fit The list returned by callling ecomplex()
-#'
-#' @export
-plot.ecomplex <- function(fit){
-  plot(log(fit$epsilons) ~ log(fit$S), 
+#' @param x The list returned by callling ecomplex()
+#' @param ... Additional arguments to base plot function.
+#' @method plot ecomplex
+plot.ecomplex <- function(x, ...){
+  plot(log(x$epsilons) ~ log(x$S), 
        col = "chocolate2",
        pch = 16, 
        cex = 1,
@@ -29,8 +30,9 @@ plot.ecomplex <- function(fit){
        ylab = expression(log(S)), 
        main = paste0('Log-log fit of the errors ',
                       'epsilon',  
-                      ' v. percent of values used S'))
+                      ' v. percent of values used S'), 
+       ...)
 
-  abline(fit$fit, col = "gray10", lwd = '1.6')
+  abline(x$fit, col = "gray10", lwd = '1.6')
 
 }
