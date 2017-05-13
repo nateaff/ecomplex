@@ -28,21 +28,20 @@ The complexity coefficients can be used a feature in classification and clusteri
 library(ecomplex)
 set.seed(1)
 reps   <- 100; n <- 500
-group1 <- replicate(reps, arima.sim(n = n, list(ar = c(0.89, -0.49), 
-                                              ma = c(-0.23, 0.25))))
-         
-
-group2 <- replicate(reps, arima.sim(n = n, list(ar = c(0.69, -0.49),
-                                              ma = c(-0.23, 0.25))))
+group1 <- replicate(reps, arima.sim(n = n, 
+                              list(ar = c(0.89, -0.49), 
+                                   ma = c(-0.23, 0.25))))
+group2 <- replicate(reps, arima.sim(n = n, 
+                              list(ar = c(0.69, -0.49),
+                                   ma = c(-0.23, 0.25))))
 ecomp1 <- apply(group1, 2, ecomplex)
 ecomp2 <- apply(group2, 2, ecomplex)
 coeffs <- lapply(c(ecomp1, ecomp2), function(fit) c(fit$A, fit$B))
 
 df     <- data.frame(do.call(rbind, coeffs))
 df$id  <- factor(rep(c(1,2), each = reps))
-names(df) <- c("A", "B", "id")
-
-palette(c("gray20", "chocolate3"))
+names(df) <- c('A', 'B', 'id')
+palette(c('gray20', 'chocolate3'))
 with(df, plot(B, A, col = id, lwd = 2))
 ``` 
 
@@ -50,12 +49,14 @@ An example from each time series group plotted on the same
 axis. 
 
 ```{r ts}
-plot(c(group1[1:500,1]), xlim = c(0,1000), ylab = "", 
-                                      col = "gray20", 
-                                      lwd = 1.2, type ='l')
-lines(501:1000, group2[, 1], col = "chocolate3", lwd = 1.2)
-abline(v = c(500), lwd = 3, col = "gray20")
-palette("default")
+plot(c(group1[1:500,1]), xlim = c(0,1000), 
+                         ylab = '', 
+                         col = 'gray20', 
+                         lwd = 1.2, 
+                         type ='l')
+lines(501:1000, group2[, 1], col = 'chocolate3', lwd = 1.2)
+abline(v = c(500), lwd = 3, col = 'gray20')
+palette('default')
 
 ```
 
