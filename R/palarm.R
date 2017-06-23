@@ -138,16 +138,18 @@ palarmf <- function( X,
     X2 <- X[(k + d ):N]
     P2 <- P + k + d - 1;
     
-    if( length(X1) <= m ) Ktemp1 <- kin
-    else if (length(X1) > m) {
-     Ktemp1 <- palarmf( X1, kin, P1, delta, thresh, m, epsilon)
+    if( length(X1) <= m ){
+       Ktemp1 <- kin
+     } else if (length(X1) > m) {
+       Ktemp1 <- palarmf( X1, kin, P1, delta, thresh, m, epsilon)
     }
-    if( length(X2) <= m )  Ktemp2 <- Ktemp1 
-    else if( length(X2) > m ) {
+    if( length(X2) <= m ){ 
+      Ktemp2 <- Ktemp1
+    } else if( length(X2) > m ) {
        Ktemp2 <- palarmf( X2, Ktemp1, P2, delta, thresh, m, epsilon )
     }
     if( length(X1) > m && length(X2) > m ) {
-      kout <- c( Ktemp2, P+k-1 )
+      kout <- c( Ktemp2, P + k - 1 )
     }
     else kout <- Ktemp2
   } 
