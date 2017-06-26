@@ -1,19 +1,3 @@
----
-output: github_document
----
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-```{r, echo = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "figures/README-", 
-  fig.width = 12, 
-  fig.height = 7
-  )
-
-```
 
 [![Build Status](https://travis-ci.org/nwaff/ecomplex.svg?branch=master)](https://travis-ci.org/nwaff/ecomplex)
 
@@ -23,7 +7,7 @@ R package for efficiently computing the epsilon-complexity coefficients of a tim
 
 # An example 
 
-The complexity coefficients can be used a feature in classification and clustering tasks. Here we generate two groups of time series, each group drawn from an ARMA(2,2) model with one parameter changed. A plot of the coefficients for each series shows the two groups are fairly well separated in the coefficient space. 
+The complexity coefficients can be used as a feature in classification and clustering tasks. Here we generate two groups of time series, each group drawn from an ARMA(2,2) model with one parameter changed. A plot of the coefficients for each series shows the two groups are fairly well separated in the coefficient space. 
 ```{r arimasim}
 library(ecomplex)
 set.seed(1)
@@ -45,8 +29,7 @@ palette(c('gray20', 'chocolate3'))
 with(df, plot(B, A, col = id, lwd = 2))
 ``` 
 
-An example from each time series group plotted on the same 
-axis. 
+An example from each time series group plotted on the same axis. 
 
 ```{r ts}
 plot(c(group1[1:500,1]), xlim = c(0,1000), 
@@ -62,9 +45,9 @@ palette('default')
 
 # The basic algorithm
 
-The `ecomplex` function successively down samples and approximates a time series. The coefficients are the parameters of a log-log regression of the set of approximation errors on the fraction of sample points retained for each approximation. Roughly, the coefficients measure the amount of information (in terms of sample points) needed to approximate a function within some error epsilon.
+The `ecomplex` function successively downsamples and approximates a time series. The coefficients are the parameters of a log-log regression of the set of approximation errors on the fraction of sample points retained for each approximation. Roughly, the coefficients measure the amount of information (in terms of sample points) needed to approximate a function within some error epsilon.
 
-For mathematical details see Darkhovsky and Piryatinska, [Binary classification of multi-channel EEG records based on the epsilon-complexity of continuous vector functions](https://arxiv.org/pdf/1610.01633.pdf).
+For mathematical details see Darkhovsky and Piryatinska, [Epsilon-complexity of continuous functions](https://arxiv.org/abs/1303.1777).
 
 # Installation
 
@@ -74,7 +57,6 @@ devtools::install_github('nwaff/ecomplex')
 ```
 # Future work 
 
-The package is in development but the `ecomplex` interface should be fairly stable. The `ecomplex` function computes the error on single variable time series but an option might be added to compute the epsilon-complexity coefficients for a multivariate time series.  
+The package is in development but the `ecomplex` interface should be fairly stable. The `ecomplex` function computes the error on univariate time series but an option might be added to compute the epsilon-complexity coefficients for a multivariate time series.  
 
-The `palarm` function included in the package is a change point detection algorithm. There will likely be minor changes to return 
-type of the function in the near future.
+The `palarm` function included in the package is a change point detection algorithm. There will likely be minor changes to return type of the function which makes optional the return of the means of each segment found by the algorithm.
