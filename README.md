@@ -1,6 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Build Status](https://travis-ci.org/nwaff/ecomplex.svg?branch=master)](https://travis-ci.org/nwaff/ecomplex)
+[![Build Status](https://travis-ci.org/nateaff/ecomplex.svg?branch=master)](https://travis-ci.org/nateaff/ecomplex)
 
 ecomplex
 ========
